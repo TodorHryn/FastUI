@@ -27,7 +27,11 @@ class Drawer
 		void translate(int32_t x, int32_t y);
 		void setScissor(int32_t x, int32_t y, int32_t width, int32_t height);
 		void drawRectange(int32_t x, int32_t y, int32_t width, int32_t height, Color color);
+
 		void drawText(int32_t x, int32_t y, int32_t size, Color color, const std::wstring &text);
+		void drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32_t size, Color color, const std::wstring &text);
+		std::pair<int32_t, int32_t> measureText(int32_t size, const std::wstring &text);
+
 		State state() const;
 		void setState(const State &state);
 		void setSize(int32_t width, int32_t height);
@@ -35,6 +39,8 @@ class Drawer
 		int32_t height() const;
 
 	private:
+		void drawChar(const Character &c, int32_t x, int32_t y, int32_t size, Color color);
+
 		int32_t m_width, m_height;
 		State m_state;
 		unsigned int m_rectVAO, m_rectVBO;
