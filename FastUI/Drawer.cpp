@@ -9,15 +9,10 @@ Drawer::Drawer(int32_t width, int32_t height)
 	, m_height(height)
 {
 	m_buffer = new unsigned char[width * height * 4]();
-	m_fontContext = msdfgl_create_context(NULL);
-	m_font = msdfgl_load_font(m_fontContext, "OpenSans-Regular.ttf", 4.0, 1.0, NULL);
-	msdfgl_set_missing_glyph_callback(m_fontContext, msdfgl_generate_glyph, NULL);
 }
 
 Drawer::~Drawer()
 {
-	msdfgl_destroy_font(m_font);
-	msdfgl_destroy_context(m_fontContext);
 }
 
 void Drawer::clear()
@@ -69,8 +64,7 @@ void Drawer::drawRectange(int32_t x, int32_t y, int32_t width, int32_t height, C
 
 void Drawer::drawText(int32_t x, int32_t y, int32_t size, Color color, const std::wstring &text)
 {
-	glm::mat4x4 proj(1);
-	msdfgl_printf(x, y, m_font, size, *((int32_t*) &color), glm::value_ptr(proj), MSDFGL_KERNING, text.c_str());
+	
 }
 
 Drawer::State Drawer::state() const

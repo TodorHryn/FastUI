@@ -2,7 +2,6 @@
 #include <cstdint>
 #include <string>
 #include <vector>
-#include <msdfgl.h>
 
 class Drawer
 {
@@ -32,7 +31,4 @@ class Drawer
 		int32_t m_width, m_height;
 		State m_state;
 		unsigned char *m_buffer;
-
-		msdfgl_context_t m_fontContext;
-		msdfgl_font_t m_font;
 };
