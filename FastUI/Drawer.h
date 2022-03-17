@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include "ShaderProgram.h"
 
 class Drawer
 {
@@ -25,10 +26,13 @@ class Drawer
 		void drawText(int32_t x, int32_t y, int32_t size, Color color, const std::wstring &text);
 		State state() const;
 		void setState(const State &state);
-		unsigned char* get();
+		void setSize(int32_t width, int32_t height);
+		int32_t width() const;
+		int32_t height() const;
 
 	private:
 		int32_t m_width, m_height;
 		State m_state;
-		unsigned char *m_buffer;
+		unsigned int m_rectVAO, m_rectVBO;
+		ShaderProgram m_rectShader;
 };

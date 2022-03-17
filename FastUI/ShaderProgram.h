@@ -17,6 +17,7 @@ class ShaderProgram {
 
 		void set1f(std::string name, float value);
 		void set3fv(std::string name, const glm::vec3 &vector);
+		void set4fv(std::string name, const glm::vec4 &vector);
 		void setMatrix4fv(std::string name, const glm::mat4 &matrix);
 		void setMatrix4fv(std::string name, float *matrix);
 

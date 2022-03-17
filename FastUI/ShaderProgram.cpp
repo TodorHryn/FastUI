@@ -90,6 +90,11 @@ void ShaderProgram::set3fv(std::string name, const glm::vec3 &vector) {
 	glUniform3fv(glGetUniformLocation(m_shaderProgram, name.c_str()), 1, glm::value_ptr(vector));
 }
 
+void ShaderProgram::set4fv(std::string name, const glm::vec4 &vector)
+{
+	glUniform4fv(glGetUniformLocation(m_shaderProgram, name.c_str()), 1, glm::value_ptr(vector));
+}
+
 void ShaderProgram::setMatrix4fv(std::string name, const glm::mat4 &matrix) {
 	glUniformMatrix4fv(glGetUniformLocation(m_shaderProgram, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
 }
