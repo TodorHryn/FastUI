@@ -7,6 +7,7 @@
 #include "ShaderProgram.h"
 #include "Button.h"
 #include "LinearLayout.h"
+#include "Font.h"
 
 GLFWwindow *window;
 std::shared_ptr<Drawer> drawer;
@@ -42,7 +43,7 @@ std::shared_ptr<LinearLayout> createLayout(bool horz, int recDepth,	int dir = 0)
 
 void draw()
 {
-	static auto layout = createLayout(true, 20);
+	static auto layout = createLayout(true, 10);
 
 	drawer->clear();
 	layout->draw(*drawer, drawer->width(), drawer->height());

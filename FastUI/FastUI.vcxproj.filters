@@ -33,6 +33,12 @@
     <ClCompile Include="LinearLayout.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Font.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Character.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="View.h">
@@ -50,12 +56,24 @@
     <ClInclude Include="LinearLayout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Font.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Character.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.frag">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="shader.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="char.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="char.vert">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include "ShaderProgram.h"
+#include "Font.h"
 
 class Drawer
 {
@@ -15,6 +16,8 @@ class Drawer
 		struct State {
 			int32_t m_translate_x = 0;
 			int32_t m_translate_y = 0;
+			int32_t m_scissorX = 0, m_scissorY = 0;
+			int32_t m_scissorWidth = 0, m_scissorHeight = 0;
 		};
 
 		Drawer(int32_t width, int32_t height);
@@ -22,6 +25,7 @@ class Drawer
 
 		void clear();
 		void translate(int32_t x, int32_t y);
+		void setScissor(int32_t x, int32_t y, int32_t width, int32_t height);
 		void drawRectange(int32_t x, int32_t y, int32_t width, int32_t height, Color color);
 		void drawText(int32_t x, int32_t y, int32_t size, Color color, const std::wstring &text);
 		State state() const;
@@ -34,5 +38,6 @@ class Drawer
 		int32_t m_width, m_height;
 		State m_state;
 		unsigned int m_rectVAO, m_rectVBO;
-		ShaderProgram m_rectShader;
+		ShaderProgram m_rectShader, m_charShader;
+		Font m_font;
 };

@@ -35,10 +35,12 @@ void LinearLayout::draw(Drawer &drawer, int32_t width, int32_t height)
 		int32_t childWidth = (width - m_spacing * (m_children.size() - 1)) / m_children.size();
 		Drawer::State state = drawer.state();
 
+		drawer.setScissor(0, 0, childWidth, height);
 		m_children[0]->draw(drawer, width - (childWidth + m_spacing) * (m_children.size() - 1), height);
 		drawer.translate(width - (childWidth + m_spacing) * (m_children.size() - 1) + m_spacing, 0);
 		for (size_t i = 1; i < m_children.size(); ++i)
 		{
+			drawer.setScissor(0, 0, childWidth, height);
 			m_children[i]->draw(drawer, childWidth, height);
 			drawer.translate(childWidth + m_spacing, 0);
 		}
@@ -50,10 +52,12 @@ void LinearLayout::draw(Drawer &drawer, int32_t width, int32_t height)
 		int32_t childHeight = (height - m_spacing * (m_children.size() - 1)) / m_children.size();
 		Drawer::State state = drawer.state();
 
+		drawer.setScissor(0, 0, width, childHeight);
 		m_children[0]->draw(drawer, width, height - (childHeight + m_spacing) * (m_children.size() - 1));
 		drawer.translate(0, height - (childHeight + m_spacing) * (m_children.size() - 1) + m_spacing);
 		for (size_t i = 1; i < m_children.size(); ++i)
 		{
+			drawer.setScissor(0, 0, width, childHeight);
 			m_children[i]->draw(drawer, width, childHeight);
 			drawer.translate(0, childHeight + m_spacing);
 		}
