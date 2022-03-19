@@ -86,7 +86,9 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="Drawer.h" />
+    <ClInclude Include="Events.h" />
     <ClInclude Include="Font.h" />
+    <ClInclude Include="Geometry.h" />
     <ClInclude Include="LinearLayout.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="View.h" />

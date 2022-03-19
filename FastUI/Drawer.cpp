@@ -176,7 +176,7 @@ std::pair<int32_t, int32_t> Drawer::measureText(int32_t size, const std::wstring
 	return std::make_pair(width, height);
 }
 
-Drawer::State Drawer::state() const
+const Drawer::State& Drawer::state() const
 {
 	return m_state;
 }

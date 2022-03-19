@@ -1,6 +1,8 @@
 #pragma once
 #include <cstdint>
+#include <functional>
 #include "Drawer.h"
+#include "Events.h"
 
 class View
 {
@@ -13,12 +15,15 @@ class View
 		View(SizePolitics width, SizePolitics height);
 		virtual ~View();
 
-		virtual void setBackgroundColor(const Drawer::Color color);
+		virtual void setOnMousePress(std::function<bool(const MouseEvent &ev)> handler);
+
+		virtual bool onMousePress(const MouseEvent &ev);
 
 		virtual void draw(Drawer &drawer, int32_t width, int32_t height) = 0;
-		virtual bool onClick(int32_t x, int32_t y);
+
+		Drawer::Color m_backgroundColor;
 
 	protected:
 		SizePolitics m_width, m_height;
-		Drawer::Color m_backgroundColor;
+		std::function<bool(const MouseEvent &ev)> m_onMousePress;
 };

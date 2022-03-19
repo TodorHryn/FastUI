@@ -11,6 +11,7 @@
 
 GLFWwindow *window;
 std::shared_ptr<Drawer> drawer;
+std::shared_ptr<LinearLayout> mainLayout;
 
 std::shared_ptr<LinearLayout> createLayout(bool horz, int recDepth,	int dir = 0)
 {
@@ -21,13 +22,20 @@ std::shared_ptr<LinearLayout> createLayout(bool horz, int recDepth,	int dir = 0)
 
 	std::shared_ptr<Button> btn = std::make_shared<Button>(View::SizePolitics::MAX, View::SizePolitics::MAX);
 	btn->setTextSize(24).setText(L"∆ми сюды!");
+	btn->setOnMousePress([btn] (const MouseEvent &ev) {
+		if (ev.action == MouseEvent::Action::PRESS && ev.button == MouseEvent::Button::LEFT)
+		{
+			btn->m_backgroundColor = Drawer::Color(0xFF - btn->m_backgroundColor.R, 0xFF - btn->m_backgroundColor.G, 0xFF - btn->m_backgroundColor.B, 0xFF);
+			return true;
+		}
+	});
 
 	if (dir % 3 == 0)
-		btn->setBackgroundColor(Drawer::Color(0xFF));
+		btn->m_backgroundColor = Drawer::Color(0xFF);
 	else if (dir % 3 == 1)
-		btn->setBackgroundColor(Drawer::Color(0x00, 0xFF));
+		btn->m_backgroundColor = Drawer::Color(0x00, 0xFF);
 	else
-		btn->setBackgroundColor(Drawer::Color(0x00, 0x00, 0xFF));
+		btn->m_backgroundColor = Drawer::Color(0x00, 0x00, 0xFF);
 	if (dir == 0 || dir == 3)
 		layout->addChild(btn);
 
@@ -45,10 +53,8 @@ std::shared_ptr<LinearLayout> createLayout(bool horz, int recDepth,	int dir = 0)
 
 void draw()
 {
-	static auto layout = createLayout(true, 10);
-
 	drawer->clear();
-	layout->draw(*drawer, drawer->width(), drawer->height());
+	mainLayout->draw(*drawer, drawer->width(), drawer->height());
 	glfwSwapBuffers(window);
 }
 
@@ -56,6 +62,28 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
 	drawer->setSize(width, height);
 	draw();
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+	double x, y;
+	glfwGetCursorPos(window, &x, &y);
+	y = drawer->height() - y;
+
+	MouseEvent::Button btn;
+	MouseEvent::Action act;
+
+	if (button == GLFW_MOUSE_BUTTON_LEFT)
+		btn = MouseEvent::Button::LEFT;
+	else if (button == GLFW_MOUSE_BUTTON_RIGHT)
+		btn = MouseEvent::Button::RIGHT;
+
+	if (action == GLFW_PRESS)
+		act = MouseEvent::Action::PRESS;
+	else if (action == GLFW_RELEASE)
+		act = MouseEvent::Action::RELEASE;
+
+	mainLayout->onMousePress(MouseEvent(btn, act, x, y));
 }
 
 int main()
@@ -81,10 +109,12 @@ int main()
 
 	glViewport(0, 0, 1280, 720);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);  
+	glfwSetMouseButtonCallback(window, mouse_button_callback);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	drawer = std::make_shared<Drawer>(1280, 720);
+	mainLayout = createLayout(true, 10);
 	while (!glfwWindowShouldClose(window)) {
 		draw();
 		glfwPollEvents();		

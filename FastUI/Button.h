@@ -14,7 +14,6 @@ class Button : public View
 
 		virtual void draw(Drawer &drawer, int32_t width, int32_t height) override;
 
-	protected:
 		std::wstring m_text;
 		int32_t m_textSize;
 		Drawer::Color m_textColor;

@@ -8,12 +8,15 @@ View::~View()
 {
 }
 
-void View::setBackgroundColor(const Drawer::Color color)
+void View::setOnMousePress(std::function<bool(const MouseEvent&ev)> handler)
 {
-	m_backgroundColor = color;
+	m_onMousePress = handler;
 }
 
-bool View::onClick(int32_t x, int32_t y)
+bool View::onMousePress(const MouseEvent &ev)
 {
-	return false;
+	if (m_onMousePress)
+		return m_onMousePress(ev);
+	else
+		return false;
 }
