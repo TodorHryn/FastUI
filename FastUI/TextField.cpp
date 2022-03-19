@@ -11,11 +11,16 @@ TextField::~TextField()
 {
 }
 
-bool TextField::onMousePress(const MouseEvent &ev)
+void TextField::setOnCharInput(std::function<bool(wchar_t ch)> onCharInput)
+{
+	m_onCharInput = onCharInput;
+}
+
+bool TextField::onMouseEvent(const MouseEvent &ev)
 {
 	if (ev.action == MouseEvent::Action::PRESS && ev.button == MouseEvent::Button::LEFT)
 		m_drawer->focus(shared_from_this());
-	return View::onMousePress(ev);
+	return View::onMouseEvent(ev);
 }
 
 void TextField::onKeyboardEvent(const KeyboardEvent &ev)
@@ -32,7 +37,8 @@ void TextField::onKeyboardEvent(const KeyboardEvent &ev)
 
 void TextField::onCharInput(wchar_t ch)
 {
-	m_text += ch;
+	if (!m_onCharInput || m_onCharInput(ch))
+		m_text += ch;
 }
 
 void TextField::draw(int32_t width, int32_t height)

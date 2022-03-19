@@ -19,7 +19,7 @@ class LinearLayout : public View
 		virtual void setOrientation(Orientation orientation);
 		virtual void setSpacing(int32_t spacing);
 
-		virtual bool onMousePress(const MouseEvent &ev);
+		virtual bool onMouseEvent(const MouseEvent &ev) override;
 
 		virtual void draw(int32_t width, int32_t height) override;
 

@@ -8,19 +8,19 @@ View::~View()
 {
 }
 
-void View::setOnMousePress(std::function<bool(const MouseEvent&ev)> handler)
+void View::setOnMouseEvent(std::function<bool(const MouseEvent&ev)> handler)
 {
-	m_onMousePress = handler;
+	m_onMouseEvent = handler;
 }
 void View::setDrawer(std::shared_ptr<Drawer> drawer)
 {
 	m_drawer = drawer;
 }
 
-bool View::onMousePress(const MouseEvent &ev)
+bool View::onMouseEvent(const MouseEvent &ev)
 {
-	if (m_onMousePress)
-		return m_onMousePress(ev);
+	if (m_onMouseEvent)
+		return m_onMouseEvent(ev);
 	else
 		return false;
 }

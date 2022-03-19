@@ -16,10 +16,10 @@ class View : public std::enable_shared_from_this<View>
 		View(SizePolitics width, SizePolitics height);
 		virtual ~View();
 
-		virtual void setOnMousePress(std::function<bool(const MouseEvent &ev)> handler);
+		virtual void setOnMouseEvent(std::function<bool(const MouseEvent &ev)> handler);
 		virtual void setDrawer(std::shared_ptr<Drawer> drawer);
 
-		virtual bool onMousePress(const MouseEvent &ev);
+		virtual bool onMouseEvent(const MouseEvent &ev);
 		virtual void onKeyboardEvent(const KeyboardEvent &ev);
 		virtual void onCharInput(wchar_t ch);
 
@@ -29,6 +29,6 @@ class View : public std::enable_shared_from_this<View>
 
 	protected:
 		SizePolitics m_width, m_height;
-		std::function<bool(const MouseEvent &ev)> m_onMousePress;
+		std::function<bool(const MouseEvent &ev)> m_onMouseEvent;
 		std::shared_ptr<Drawer> m_drawer;
 };

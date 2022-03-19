@@ -7,7 +7,9 @@ public:
 	TextField(SizePolitics width, SizePolitics height);
 	virtual ~TextField();
 
-	virtual bool onMousePress(const MouseEvent &ev) override;
+	virtual void setOnCharInput(std::function<bool(wchar_t ch)> onCharInput);
+
+	virtual bool onMouseEvent(const MouseEvent &ev) override;
 	virtual void onKeyboardEvent(const KeyboardEvent &ev) override;
 	virtual void onCharInput(wchar_t ch) override;
 
@@ -16,4 +18,7 @@ public:
 	std::wstring m_text;
 	int32_t m_textSize;
 	Drawer::Color m_textColor;
+
+protected:
+	std::function<bool(wchar_t ch)> m_onCharInput;
 };

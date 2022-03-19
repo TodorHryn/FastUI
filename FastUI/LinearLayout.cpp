@@ -27,7 +27,7 @@ void LinearLayout::setSpacing(int32_t spacing)
 	m_spacing = spacing;
 }
 
-bool LinearLayout::onMousePress(const MouseEvent &ev)
+bool LinearLayout::onMouseEvent(const MouseEvent &ev)
 {
 	for (size_t i = 0; i < m_children.size(); ++i)
 	{
@@ -37,12 +37,12 @@ bool LinearLayout::onMousePress(const MouseEvent &ev)
 			&& ev.y >= rect.y 
 			&& ev.y <= rect.y + rect.height)
 		{
-			if (m_children[i]->onMousePress(ev))
+			if (m_children[i]->onMouseEvent(ev))
 				return true;
 		}
 	}
 
-	return View::onMousePress(ev);
+	return View::onMouseEvent(ev);
 }
 
 void LinearLayout::draw(int32_t width, int32_t height)
@@ -79,10 +79,10 @@ void LinearLayout::draw(int32_t width, int32_t height)
 		m_drawer->drawRectange(0, 0, width, height, m_backgroundColor);
 		m_drawer->setScissor(0, 0, width, childHeight);
 		int32_t firstChildHeight = height - (childHeight + m_spacing) * (m_children.size() - 1);
-		m_children[0]->draw(width, firstChildHeight);
-		m_childrenBB[0] = FastUI::Rectangle(m_drawer->state().m_translate_x, m_drawer->state().m_translate_y, width, firstChildHeight);
+		m_children.back()->draw(width, firstChildHeight);
+		m_childrenBB.back() = FastUI::Rectangle(m_drawer->state().m_translate_x, m_drawer->state().m_translate_y, width, firstChildHeight);
 		m_drawer->translate(0, height - (childHeight + m_spacing) * (m_children.size() - 1) + m_spacing);
-		for (size_t i = 1; i < m_children.size(); ++i)
+		for (int i = m_children.size() - 2; i >= 0; --i)
 		{
 			m_drawer->setScissor(0, 0, width, childHeight);
 			m_children[i]->draw(width, childHeight);
