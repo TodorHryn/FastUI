@@ -20,6 +20,8 @@ std::shared_ptr<LinearLayout> createLayout(bool horz, int recDepth,	int dir = 0)
 	layout->setSpacing(2);
 
 	std::shared_ptr<Button> btn = std::make_shared<Button>(View::SizePolitics::MAX, View::SizePolitics::MAX);
+	btn->setTextSize(24).setText(L"∆ми сюды!");
+
 	if (dir % 3 == 0)
 		btn->setBackgroundColor(Drawer::Color(0xFF));
 	else if (dir % 3 == 1)
