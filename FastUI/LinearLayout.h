@@ -21,9 +21,11 @@ class LinearLayout : public View
 
 		virtual bool onMousePress(const MouseEvent &ev);
 
-		virtual void draw(Drawer &drawer, int32_t width, int32_t height) override;
+		virtual void draw(int32_t width, int32_t height) override;
 
 	protected:
+		virtual void setDrawer(std::shared_ptr<Drawer> drawer);
+
 		Orientation m_orientation;
 		int32_t m_spacing;
 

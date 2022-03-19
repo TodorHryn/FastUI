@@ -11,34 +11,16 @@ Button::~Button()
 {
 }
 
-Button& Button::setText(const std::wstring &text)
+void Button::draw(int32_t width, int32_t height)
 {
-	m_text = text;
-	return *this;
-}
-
-Button& Button::setTextSize(int32_t textSize)
-{
-	m_textSize = textSize;
-	return *this;
-}
-
-Button& Button::setTextColor(const Drawer::Color &color)
-{
-	m_textColor = color;
-	return *this;
-}
-
-void Button::draw(Drawer &drawer, int32_t width, int32_t height)
-{
-	Drawer::State state = drawer.state();
-	drawer.drawRectange(0, 0, width, height, m_backgroundColor);
+	Drawer::State state = m_drawer->state();
+	m_drawer->drawRectange(0, 0, width, height, m_backgroundColor);
 
 	if (m_text.size())
 	{
-		auto size = drawer.measureText(m_textSize, m_text);
-		drawer.drawText(width / 2 - size.first / 2, height / 2 - size.second / 2, m_textSize, m_textColor, m_text);
+		auto size = m_drawer->measureText(m_textSize, m_text);
+		m_drawer->drawText(width / 2 - size.first / 2, height / 2 - size.second / 2, m_textSize, m_textColor, m_text);
 	}
 
-	drawer.setState(state);
+	m_drawer->setState(state);
 }

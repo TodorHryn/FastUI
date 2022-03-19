@@ -2,10 +2,16 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <memory>
+#include <glad\glad.h>
+#include <GLFW\glfw3.h>
 #include "ShaderProgram.h"
 #include "Font.h"
+#include "Events.h"
 
-class Drawer
+class View;
+
+class Drawer : public std::enable_shared_from_this<Drawer>
 {
 	public:
 		struct Color {
@@ -20,30 +26,38 @@ class Drawer
 			int32_t m_scissorWidth = 0, m_scissorHeight = 0;
 		};
 
-		Drawer(int32_t width, int32_t height);
+		Drawer(GLFWwindow *window, int32_t width, int32_t height);
 		virtual ~Drawer();
 
-		void clear();
+		void onCharInput(wchar_t ch);
+		void onKeyboardEvent(const KeyboardEvent &ev);
+
+		void render();
 		void translate(int32_t x, int32_t y);
-		void setScissor(int32_t x, int32_t y, int32_t width, int32_t height);
-		void drawRectange(int32_t x, int32_t y, int32_t width, int32_t height, Color color);
-
-		void drawText(int32_t x, int32_t y, int32_t size, Color color, const std::wstring &text);
-		void drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32_t size, Color color, const std::wstring &text);
-		std::pair<int32_t, int32_t> measureText(int32_t size, const std::wstring &text);
-
-		const State& state() const;
+		void focus(std::shared_ptr<View> view);
+		void setRoot(std::shared_ptr<View> view);
 		void setState(const State &state);
 		void setSize(int32_t width, int32_t height);
+		void setScissor(int32_t x, int32_t y, int32_t width, int32_t height);
+		void drawRectange(int32_t x, int32_t y, int32_t width, int32_t height, Color color);
+		void drawText(int32_t x, int32_t y, int32_t size, Color color, const std::wstring &text);
+		void drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32_t size, Color color, const std::wstring &text);
+
+		std::pair<int32_t, int32_t> measureText(int32_t size, const std::wstring &text);
+		const State& state() const;
 		int32_t width() const;
 		int32_t height() const;
 
 	private:
+		void clear();
 		void drawChar(const Character &c, int32_t x, int32_t y, int32_t size, Color color);
 
+		GLFWwindow *m_window;
 		int32_t m_width, m_height;
 		State m_state;
 		unsigned int m_rectVAO, m_rectVBO;
 		ShaderProgram m_rectShader, m_charShader;
 		Font m_font;
+		std::shared_ptr<View> m_focusedView;
+		std::shared_ptr<View> m_root;
 };

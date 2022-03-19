@@ -1,4 +1,5 @@
 #include "Drawer.h"
+#include "View.h"
 #include <fstream>
 #include <glm\glm.hpp>
 #include <glm\gtc\matrix_transform.hpp>
@@ -7,8 +8,9 @@
 #include <glad\glad.h>
 #include <algorithm>
 
-Drawer::Drawer(int32_t width, int32_t height)
-	: m_width(width)
+Drawer::Drawer(GLFWwindow *window, int32_t width, int32_t height)
+	: m_window(window)
+	, m_width(width)
 	, m_height(height)
 	, m_rectShader("shader")
 	, m_charShader("char")
@@ -38,6 +40,18 @@ Drawer::~Drawer()
 {
 }
 
+void Drawer::onCharInput(wchar_t ch)
+{
+	if (m_focusedView)
+		m_focusedView->onCharInput(ch);
+}
+
+void Drawer::onKeyboardEvent(const KeyboardEvent &ev)
+{
+	if (m_focusedView)
+		m_focusedView->onKeyboardEvent(ev);
+}
+
 void Drawer::clear()
 {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -45,10 +59,28 @@ void Drawer::clear()
 	m_state = State();
 }
 
+void Drawer::render()
+{
+	clear();
+	m_root->draw(m_width, m_height);
+	glfwSwapBuffers(m_window);
+}
+
 void Drawer::translate(int32_t x, int32_t y)
 {
 	m_state.m_translate_x += x;
 	m_state.m_translate_y += y;
+}
+
+void Drawer::focus(std::shared_ptr<View> view)
+{
+	m_focusedView = view;
+}
+
+void Drawer::setRoot(std::shared_ptr<View> view)
+{
+	m_root = view;
+	m_root->setDrawer(shared_from_this());
 }
 
 void Drawer::setScissor(int32_t x, int32_t y, int32_t width, int32_t height)

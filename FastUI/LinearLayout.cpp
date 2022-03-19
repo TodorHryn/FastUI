@@ -12,6 +12,7 @@ LinearLayout::~LinearLayout()
 
 void LinearLayout::addChild(std::shared_ptr<View> child)
 {
+	child->setDrawer(m_drawer);
 	m_children.push_back(child);
 	m_childrenBB.push_back(FastUI::Rectangle());
 }
@@ -44,7 +45,7 @@ bool LinearLayout::onMousePress(const MouseEvent &ev)
 	return View::onMousePress(ev);
 }
 
-void LinearLayout::draw(Drawer &drawer, int32_t width, int32_t height)
+void LinearLayout::draw(int32_t width, int32_t height)
 {
 	if (m_children.empty())
 		return;
@@ -52,41 +53,50 @@ void LinearLayout::draw(Drawer &drawer, int32_t width, int32_t height)
 	if (m_orientation == Orientation::HORIZONTAL) 
 	{
 		int32_t childWidth = (width - m_spacing * (m_children.size() - 1)) / m_children.size();
-		Drawer::State state = drawer.state();
+		Drawer::State state = m_drawer->state();
 
-		drawer.setScissor(0, 0, childWidth, height);
+		m_drawer->drawRectange(0, 0, width, height, m_backgroundColor);
+		m_drawer->setScissor(0, 0, childWidth, height);
 		int32_t firstChildWidth = width - (childWidth + m_spacing) * (m_children.size() - 1);
-		m_children[0]->draw(drawer, firstChildWidth, height);
-		m_childrenBB[0] = FastUI::Rectangle(drawer.state().m_translate_x, drawer.state().m_translate_y, firstChildWidth, height);
-		drawer.translate(width - (childWidth + m_spacing) * (m_children.size() - 1) + m_spacing, 0);
+		m_children[0]->draw(firstChildWidth, height);
+		m_childrenBB[0] = FastUI::Rectangle(m_drawer->state().m_translate_x, m_drawer->state().m_translate_y, firstChildWidth, height);
+		m_drawer->translate(width - (childWidth + m_spacing) * (m_children.size() - 1) + m_spacing, 0);
 		for (size_t i = 1; i < m_children.size(); ++i)
 		{
-			drawer.setScissor(0, 0, childWidth, height);
-			m_children[i]->draw(drawer, childWidth, height);
-			m_childrenBB[i] = FastUI::Rectangle(drawer.state().m_translate_x, drawer.state().m_translate_y, childWidth, height);
-			drawer.translate(childWidth + m_spacing, 0);
+			m_drawer->setScissor(0, 0, childWidth, height);
+			m_children[i]->draw(childWidth, height);
+			m_childrenBB[i] = FastUI::Rectangle(m_drawer->state().m_translate_x, m_drawer->state().m_translate_y, childWidth, height);
+			m_drawer->translate(childWidth + m_spacing, 0);
 		}
 
-		drawer.setState(state);
+		m_drawer->setState(state);
 	}
 	else
 	{
 		int32_t childHeight = (height - m_spacing * (m_children.size() - 1)) / m_children.size();
-		Drawer::State state = drawer.state();
+		Drawer::State state = m_drawer->state();
 
-		drawer.setScissor(0, 0, width, childHeight);
+		m_drawer->drawRectange(0, 0, width, height, m_backgroundColor);
+		m_drawer->setScissor(0, 0, width, childHeight);
 		int32_t firstChildHeight = height - (childHeight + m_spacing) * (m_children.size() - 1);
-		m_children[0]->draw(drawer, width, firstChildHeight);
-		m_childrenBB[0] = FastUI::Rectangle(drawer.state().m_translate_x, drawer.state().m_translate_y, width, firstChildHeight);
-		drawer.translate(0, height - (childHeight + m_spacing) * (m_children.size() - 1) + m_spacing);
+		m_children[0]->draw(width, firstChildHeight);
+		m_childrenBB[0] = FastUI::Rectangle(m_drawer->state().m_translate_x, m_drawer->state().m_translate_y, width, firstChildHeight);
+		m_drawer->translate(0, height - (childHeight + m_spacing) * (m_children.size() - 1) + m_spacing);
 		for (size_t i = 1; i < m_children.size(); ++i)
 		{
-			drawer.setScissor(0, 0, width, childHeight);
-			m_children[i]->draw(drawer, width, childHeight);
-			m_childrenBB[i] = FastUI::Rectangle(drawer.state().m_translate_x, drawer.state().m_translate_y, width, childHeight);
-			drawer.translate(0, childHeight + m_spacing);
+			m_drawer->setScissor(0, 0, width, childHeight);
+			m_children[i]->draw(width, childHeight);
+			m_childrenBB[i] = FastUI::Rectangle(m_drawer->state().m_translate_x, m_drawer->state().m_translate_y, width, childHeight);
+			m_drawer->translate(0, childHeight + m_spacing);
 		}
 
-		drawer.setState(state);
+		m_drawer->setState(state);
 	}
+}
+
+void LinearLayout::setDrawer(std::shared_ptr<Drawer> drawer)
+{
+	for (auto &child : m_children)
+		child->setDrawer(drawer);
+	View::setDrawer(drawer);
 }

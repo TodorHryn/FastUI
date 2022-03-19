@@ -2,7 +2,7 @@
 
 struct MouseEvent
 {
-	enum class Button{
+	enum class Button {
 		LEFT,
 		RIGHT
 	};
@@ -13,10 +13,30 @@ struct MouseEvent
 		RELEASE
 	};
 
-	MouseEvent(const Button &btn, const Action &ac, int32_t c_x, int32_t c_y) : button(btn), action(ac), x(c_x), y(c_y) {}
+	MouseEvent(Button btn, Action ac, int32_t c_x, int32_t c_y) : button(btn), action(ac), x(c_x), y(c_y) {}
 
 	Button button;
 	Action action;
 	int32_t x;
 	int32_t y;
+};
+
+struct KeyboardEvent
+{
+	enum class Button
+	{
+		BACKSPACE
+	};
+
+	enum class Action
+	{
+		PRESS,
+		RELEASE,
+		REPEAT
+	};
+
+	KeyboardEvent(Button btn, Action ac) : button(btn), action(ac) {}
+
+	Button button;
+	Action action;
 };
