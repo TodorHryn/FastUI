@@ -73,10 +73,10 @@ void Drawer::drawRectange(int32_t x, int32_t y, int32_t width, int32_t height, C
 	));
 	projection = glm::scale(projection, glm::vec3(glWidth, glHeight, 1.0f));
 	glm::vec4 clr;
-	clr.a = color.A;
-	clr.r = color.R;
-	clr.b = color.B;
-	clr.g = color.G;
+	clr.a = color.A / 255.0f;
+	clr.r = color.R / 255.0f;
+	clr.b = color.B / 255.0f;
+	clr.g = color.G / 255.0f;
 
 	m_rectShader.setMatrix4fv("projection", projection);
 	m_rectShader.set4fv("color", clr);
@@ -215,10 +215,10 @@ void Drawer::drawChar(const Character &c, int32_t x, int32_t y, int32_t size, Co
 	));
 	projection = glm::scale(projection, glm::vec3(glWidth, glHeight, 1.0f));
 	glm::vec4 clr;
-	clr.a = color.A;
-	clr.r = color.R;
-	clr.b = color.B;
-	clr.g = color.G;
+	clr.a = color.A / 255.0f;
+	clr.r = color.R / 255.0f;
+	clr.b = color.B / 255.0f;
+	clr.g = color.G / 255.0f;
 
 	m_charShader.setMatrix4fv("projection", projection);
 	m_charShader.set4fv("color", clr);
