@@ -28,7 +28,8 @@ struct KeyboardEvent
 		NONE,
 		BACKSPACE,
 		LEFT,
-		RIGHT
+		RIGHT,
+		ENTER
 	};
 
 	enum class Action

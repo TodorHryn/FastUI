@@ -34,6 +34,8 @@ void TextField::onKeyboardEvent(const KeyboardEvent &ev)
 		{
 			if (m_cursorPos > 0 && m_cursorPos <= m_text.size())
 				m_text.erase(m_text.begin() + m_cursorPos - 1);
+			else if (m_cursorPos < 0)
+				m_text.pop_back();
 			if (m_cursorPos > 0)
 				m_cursorPos--;
 			m_lastCursorMoveTime = m_drawer->getTimeMs();
@@ -75,12 +77,10 @@ void TextField::draw(int32_t width, int32_t height)
 
 	if (m_text.size())
 	{
-		auto size = m_drawer->measureText(m_textSize, m_text);
-
 		if (m_drawer->isFocused(shared_from_this()) && (m_drawer->getTimeMs() - m_lastCursorMoveTime < 1000 || (m_drawer->getTimeMs() % 1600) > 800))
-			m_drawer->drawText(0, height / 2 - size.second / 2, m_textSize, m_textColor, m_text, m_cursorPos);
+			m_drawer->drawText(0, height / 2 - m_textSize / 2, m_textSize, m_textColor, m_text, m_cursorPos);
 		else
-			m_drawer->drawText(0, height / 2 - size.second / 2, m_textSize, m_textColor, m_text);
+			m_drawer->drawText(0, height / 2 - m_textSize / 2, m_textSize, m_textColor, m_text);
 	}
 
 	m_drawer->setState(state);

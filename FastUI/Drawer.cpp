@@ -95,15 +95,13 @@ void Drawer::drawRectange(int32_t x, int32_t y, int32_t width, int32_t height, C
 {
 	m_rectShader.use();
 
-	float glWidth = static_cast<float>(width) / m_width;
-	float glHeight = static_cast<float>(height) / m_height;
 	glm::mat4 projection(1.0f);
 	projection = glm::translate(projection, glm::vec3(
-		-1.0f + static_cast<float>(x + m_state.m_translate_x) / m_width * 2 + glWidth,
-		-1.0f + static_cast<float>(y + m_state.m_translate_y) / m_height * 2 + glHeight,
+		glx(x + m_state.m_translate_x, width),
+		gly(y + m_state.m_translate_y, height),
 		0.0f
 	));
-	projection = glm::scale(projection, glm::vec3(glWidth, glHeight, 1.0f));
+	projection = glm::scale(projection, glm::vec3(glwidth(width), glheight(height), 1.0f));
 	glm::vec4 clr;
 	clr.a = color.A / 255.0f;
 	clr.r = color.R / 255.0f;
@@ -119,44 +117,36 @@ void Drawer::drawRectange(int32_t x, int32_t y, int32_t width, int32_t height, C
 
 void Drawer::drawText(int32_t x, int32_t y, int32_t size, Color color, const std::wstring &text, int32_t cursorPos)
 {
-	if (m_state.m_scissorWidth > 0 && m_state.m_scissorHeight > 0)
-	{
-		glEnable(GL_SCISSOR_TEST);
-		glScissor(m_state.m_scissorX, m_state.m_scissorY, m_state.m_scissorWidth, m_state.m_scissorHeight);
-	}
-
-	float m_advance = 0;
+	enableScissor();
+	float advanceX = 0;
 	for (size_t i = 0; i < text.size(); ++i)
 	{
 		if (cursorPos == i)
-			drawRectange(x + m_advance, y, 2, size, Drawer::Color(0x00, 0x00, 0x00));
+			drawRectange(x + advanceX, y, 2, size, Drawer::Color(0x00, 0x00, 0x00));
 
 		m_charShader.use();
 		Character &c = m_font.get(text[i]);
 		float charScale = static_cast<float>(size) / c.m_size;
-		drawChar(c, x + m_advance, y, size, color);
-		m_advance += static_cast<float>(c.m_advance) / 64 * charScale;
+		drawChar(c, x + advanceX, y, size, color);
+		advanceX += static_cast<float>(c.m_advance) / 64 * charScale;
 	}
 	if (cursorPos >= 0 && cursorPos >= text.size())
-		drawRectange(x + m_advance, y, 2, size, Drawer::Color(0x00, 0x00, 0x00));
-
-	glDisable(GL_SCISSOR_TEST);
+		drawRectange(x + advanceX, y, 2, size, Drawer::Color(0x00, 0x00, 0x00));
+	disableScissor();
 }
 
-void Drawer::drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32_t size, Color color, const std::wstring &text)
+void Drawer::drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32_t size, Color color, const std::wstring &text, int32_t cursorPos)
 {
-	m_charShader.use();
-	if (m_state.m_scissorWidth > 0 && m_state.m_scissorHeight > 0)
-	{
-		glEnable(GL_SCISSOR_TEST);
-		glScissor(m_state.m_scissorX, m_state.m_scissorY, m_state.m_scissorWidth, m_state.m_scissorHeight);
-	}
-
+	enableScissor();
 	float wordWidth = 0;
 	int32_t lineHeight = 0;
 	float advanceX = 0, advanceY = 0;
 	for (size_t i = 0; i < text.size(); ++i)
 	{
+		if (cursorPos == i)
+			drawRectange(x + advanceX, y + advanceY, 2, size, Drawer::Color(0x00, 0x00, 0x00));
+
+		m_charShader.use();
 		if (wordWidth == 0 && text[i] != L' ' && text[i] != L'\n')
 		{
 			for (size_t j = i; j < text.size() && text[j] != L' ' && text[i] != L'\n'; ++j)
@@ -169,7 +159,7 @@ void Drawer::drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32
 			if (advanceX + wordWidth > width)
 			{
 				advanceX = 0;
-				advanceY -= lineHeight * 1.2;
+				advanceY += lineHeight * 1.2;
 				lineHeight = 0;
 			}
 		}
@@ -178,25 +168,29 @@ void Drawer::drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32
 		if (text[i] == L'\n')
 		{
 			advanceX = 0;
-			advanceY -= lineHeight > 0 ? lineHeight * 1.2 : size * 1.2;
+			advanceY += lineHeight > 0 ? lineHeight * 1.2 : size * 1.2;
 			lineHeight = 0;
 		}
 
-		Character &c = m_font.get(text[i]);
-		float charScale = static_cast<float>(size) / c.m_size;
-		if (advanceX + (c.m_width + c.m_advance / 64) * charScale > width)
+		if (text[i] != L'\n')
 		{
-			advanceX = 0;
-			advanceY -= lineHeight > 0 ? lineHeight * 1.2 : size * 1.2;
-			lineHeight = 0;
+			Character &c = m_font.get(text[i]);
+			float charScale = static_cast<float>(size) / c.m_size;
+			if (advanceX + (c.m_width + c.m_advance / 64) * charScale > width)
+			{
+				advanceX = 0;
+				advanceY += lineHeight > 0 ? lineHeight * 1.2 : size * 1.2;
+				lineHeight = 0;
+			}
+			lineHeight = std::max(lineHeight, static_cast<int32_t>(c.m_height * charScale));
+
+			drawChar(c, x + advanceX, y + advanceY, size, color);
+			advanceX += static_cast<float>(c.m_advance) / 64 * charScale;
 		}
-		lineHeight = std::max(lineHeight, static_cast<int32_t>(c.m_height * charScale));
-
-		drawChar(c, x + advanceX, y + advanceY, size, color);
-		advanceX += static_cast<float>(c.m_advance) / 64 * charScale;
 	}
-
-	glDisable(GL_SCISSOR_TEST);
+	if (cursorPos >= 0 && cursorPos >= text.size())
+		drawRectange(x + advanceX, y + advanceY, 2, size, Drawer::Color(0x00, 0x00, 0x00));
+	disableScissor();
 }
 
 std::pair<int32_t, int32_t> Drawer::measureText(int32_t size, const std::wstring &text)
@@ -249,18 +243,50 @@ int32_t Drawer::getTimeMs() const
 	return glfwGetTime() * 1000;
 }
 
+float Drawer::glx(int32_t x, int32_t width)
+{
+	return -1.0f + static_cast<float>(x + width / 2) / m_width * 2;
+}
+
+float Drawer::gly(int32_t y, int32_t height)
+{
+	return 1.0f - static_cast<float>(y + height / 2) / m_height * 2;
+}
+
+float Drawer::glwidth(int32_t width)
+{
+	return static_cast<float>(width) / m_width;
+}
+
+float Drawer::glheight(int32_t height)
+{
+	return static_cast<float>(height) / m_height;
+}
+
+void Drawer::enableScissor()
+{
+	if (m_state.m_scissorWidth > 0 && m_state.m_scissorHeight > 0)
+	{
+		glEnable(GL_SCISSOR_TEST);
+		glScissor(m_state.m_scissorX, m_height - m_state.m_scissorY - m_state.m_scissorHeight, m_state.m_scissorWidth, m_state.m_scissorHeight);
+	}
+}
+
+void Drawer::disableScissor()
+{
+	glDisable(GL_SCISSOR_TEST);
+}
+
 void Drawer::drawChar(const Character &c, int32_t x, int32_t y, int32_t size, Color color)
 {
 	float charScale = static_cast<float>(size) / c.m_size;
-	float glWidth = charScale * c.m_width / m_width;
-	float glHeight = charScale * c.m_height / m_height;
 	glm::mat4 projection(1.0f);
 	projection = glm::translate(projection, glm::vec3(
-		-1.0f + static_cast<float>(x + m_state.m_translate_x + c.m_bearingX * charScale) / m_width * 2 + glWidth,
-		-1.0f + static_cast<float>(y + m_state.m_translate_y - (c.m_height - c.m_bearingY) * charScale) / m_height * 2 + glHeight,
+		glx(x + m_state.m_translate_x + c.m_bearingX * charScale, charScale * c.m_width),
+		gly(y + m_state.m_translate_y - c.m_bearingY * charScale + size, charScale * c.m_height),
 		0.0f
 	));
-	projection = glm::scale(projection, glm::vec3(glWidth, glHeight, 1.0f));
+	projection = glm::scale(projection, glm::vec3(glwidth(charScale * c.m_width), glheight(charScale * c.m_height), 1.0f));
 	glm::vec4 clr;
 	clr.a = color.A / 255.0f;
 	clr.r = color.R / 255.0f;

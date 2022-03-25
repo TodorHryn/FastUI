@@ -57,8 +57,8 @@ void LinearLayout::draw(int32_t width, int32_t height)
 		Drawer::State state = m_drawer->state();
 
 		m_drawer->drawRectange(0, 0, width, height, m_backgroundColor);
-		m_drawer->setScissor(0, 0, childWidth, height);
 		int32_t firstChildWidth = width - (childWidth + m_spacing) * (m_children.size() - 1);
+		m_drawer->setScissor(0, 0, firstChildWidth, height);
 		m_children[0]->draw(firstChildWidth, height);
 		m_childrenBB[0] = FastUI::Rectangle(m_drawer->state().m_translate_x, m_drawer->state().m_translate_y, firstChildWidth, height);
 		m_drawer->translate(width - (childWidth + m_spacing) * (m_children.size() - 1) + m_spacing, 0);
@@ -78,12 +78,12 @@ void LinearLayout::draw(int32_t width, int32_t height)
 		Drawer::State state = m_drawer->state();
 
 		m_drawer->drawRectange(0, 0, width, height, m_backgroundColor);
-		m_drawer->setScissor(0, 0, width, childHeight);
 		int32_t firstChildHeight = height - (childHeight + m_spacing) * (m_children.size() - 1);
-		m_children.back()->draw(width, firstChildHeight);
-		m_childrenBB.back() = FastUI::Rectangle(m_drawer->state().m_translate_x, m_drawer->state().m_translate_y, width, firstChildHeight);
+		m_drawer->setScissor(0, 0, width, firstChildHeight);
+		m_children[0]->draw(width, firstChildHeight);
+		m_childrenBB[0] = FastUI::Rectangle(m_drawer->state().m_translate_x, m_drawer->state().m_translate_y, width, firstChildHeight);
 		m_drawer->translate(0, height - (childHeight + m_spacing) * (m_children.size() - 1) + m_spacing);
-		for (int i = m_children.size() - 2; i >= 0; --i)
+		for (int i = 1; i < m_children.size(); ++i)
 		{
 			m_drawer->setScissor(0, 0, width, childHeight);
 			m_children[i]->draw(width, childHeight);

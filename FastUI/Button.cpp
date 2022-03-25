@@ -30,7 +30,7 @@ void Button::draw(int32_t width, int32_t height)
 	if (m_text.size())
 	{
 		auto size = m_drawer->measureText(m_textSize, m_text);
-		m_drawer->drawText(width / 2 - size.first / 2, height / 2 - size.second / 2, m_textSize, m_textColor, m_text);
+		m_drawer->drawText(width / 2 - size.first / 2, height / 2 - m_textSize / 2, m_textSize, m_textColor, m_text);
 	}
 
 	m_drawer->setState(state);

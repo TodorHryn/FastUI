@@ -41,7 +41,7 @@ class Drawer : public std::enable_shared_from_this<Drawer>
 		void setScissor(int32_t x, int32_t y, int32_t width, int32_t height);
 		void drawRectange(int32_t x, int32_t y, int32_t width, int32_t height, Color color);
 		void drawText(int32_t x, int32_t y, int32_t size, Color color, const std::wstring &text, int32_t cursorPos = -1);
-		void drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32_t size, Color color, const std::wstring &text);
+		void drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32_t size, Color color, const std::wstring &text, int32_t cursorPos = -1);
 
 		std::pair<int32_t, int32_t> measureText(int32_t size, const std::wstring &text);
 		const State& state() const;
@@ -51,6 +51,13 @@ class Drawer : public std::enable_shared_from_this<Drawer>
 		int32_t getTimeMs() const;
 
 	private:
+		float glx(int32_t x, int32_t width);
+		float gly(int32_t y, int32_t height);
+		float glwidth(int32_t width);
+		float glheight(int32_t height);
+		void enableScissor();
+		void disableScissor();
+
 		void clear();
 		void drawChar(const Character &c, int32_t x, int32_t y, int32_t size, Color color);
 

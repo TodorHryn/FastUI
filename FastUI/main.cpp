@@ -8,6 +8,7 @@
 #include "Button.h"
 #include "LinearLayout.h"
 #include "TextField.h"
+#include "TextArea.h"
 #include "Font.h"
 #include "Util.h"
 
@@ -228,7 +229,7 @@ std::shared_ptr<LinearLayout> createChat()
 	field1->m_textColor = Drawer::Color(0x00, 0x00, 0x00);
 	field1->m_textSize = 48;
 	lay->addChild(field1);
-	std::shared_ptr<TextField> field2 = std::make_shared<TextField>();
+	std::shared_ptr<TextArea> field2 = std::make_shared<TextArea>();
 	field2->m_backgroundColor = Drawer::Color(0xE0, 0xE0, 0xE0);
 	field2->m_textColor = Drawer::Color(0x00, 0x00, 0x00);
 	field2->m_textSize = 48;
@@ -246,7 +247,6 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
 	double x, y;
 	glfwGetCursorPos(window, &x, &y);
-	y = drawer->height() - y;
 
 	MouseEvent::Button btn;
 	MouseEvent::Action act;
@@ -287,6 +287,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		btn = KeyboardEvent::Button::LEFT;
 	else if (key == GLFW_KEY_RIGHT)
 		btn = KeyboardEvent::Button::RIGHT;
+	else if (key == GLFW_KEY_ENTER)
+		btn = KeyboardEvent::Button::ENTER;
 
 	if (btn != KeyboardEvent::Button::NONE)
 		drawer->onKeyboardEvent(KeyboardEvent(btn, act));

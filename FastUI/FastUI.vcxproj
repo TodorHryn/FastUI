@@ -80,6 +80,7 @@
     <ClCompile Include="LinearLayout.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="TextArea.cpp" />
     <ClCompile Include="TextField.cpp" />
     <ClCompile Include="View.cpp" />
   </ItemGroup>
@@ -92,6 +93,7 @@
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="LinearLayout.h" />
     <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="TextArea.h" />
     <ClInclude Include="TextField.h" />
     <ClInclude Include="Util.h" />
     <ClInclude Include="View.h" />
