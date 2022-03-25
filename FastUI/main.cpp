@@ -252,6 +252,7 @@ void pushMessage(std::shared_ptr<LinearLayout> msgLay, std::shared_ptr<TextArea>
 		username->m_paddingX = 8;
 		username->m_paddingY = 8;
 		username->m_text = asMe ? L"[My username]" : L"[Other username]";
+		username->m_editable = false;
 		usernameLay->addChild(username);
 	}
 	prevFrom = asMe;
@@ -263,6 +264,7 @@ void pushMessage(std::shared_ptr<LinearLayout> msgLay, std::shared_ptr<TextArea>
 	msg->m_paddingX = 8;
 	msg->m_paddingY = 8;
 	msg->m_text = inputText->m_text;
+	msg->m_editable = false;
 	curMsgLay->addChild(msg);
 
 	inputText->m_cursorPos = 0;

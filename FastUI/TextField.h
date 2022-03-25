@@ -21,6 +21,7 @@ public:
 	int32_t m_textSize;
 	int32_t m_cursorPos;
 	Drawer::Color m_textColor;
+	bool m_editable;
 
 protected:
 	int32_t m_lastCursorMoveTime;

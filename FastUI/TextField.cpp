@@ -7,6 +7,7 @@ TextField::TextField(SizePolitics width, SizePolitics height)
 	, m_textColor(Drawer::Color(0xFF, 0xFF, 0xFF))
 	, m_cursorPos(0)
 	, m_lastCursorMoveTime(0)
+	, m_editable(true)
 {
 }
 
@@ -21,6 +22,9 @@ void TextField::setOnCharInput(std::function<bool(wchar_t ch)> onCharInput)
 
 bool TextField::onMouseEvent(const MouseEvent &ev)
 {
+	if (!m_editable)
+		return false;
+
 	if (ev.action == MouseEvent::Action::PRESS && ev.button == MouseEvent::Button::LEFT)
 		m_drawer->focus(shared_from_this());
 	return View::onMouseEvent(ev);
@@ -28,6 +32,9 @@ bool TextField::onMouseEvent(const MouseEvent &ev)
 
 void TextField::onKeyboardEvent(const KeyboardEvent &ev)
 {
+	if (!m_editable)
+		return;
+
 	if (ev.action == KeyboardEvent::Action::PRESS || ev.action == KeyboardEvent::Action::REPEAT)
 	{
 		if (ev.button == KeyboardEvent::Button::BACKSPACE)
@@ -57,6 +64,9 @@ void TextField::onKeyboardEvent(const KeyboardEvent &ev)
 
 void TextField::onCharInput(wchar_t ch)
 {
+	if (!m_editable)
+		return;
+
 	if (!m_onCharInput || m_onCharInput(ch))
 	{
 		if (m_cursorPos >= 0 && m_cursorPos < m_text.size())

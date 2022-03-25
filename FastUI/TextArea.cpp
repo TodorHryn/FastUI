@@ -11,6 +11,9 @@ TextArea::~TextArea()
 
 void TextArea::onKeyboardEvent(const KeyboardEvent &ev)
 {
+	if (!m_editable)
+		return;
+
 	TextField::onKeyboardEvent(ev);
 	if (ev.action == KeyboardEvent::Action::PRESS || ev.action == KeyboardEvent::Action::REPEAT)
 	{
