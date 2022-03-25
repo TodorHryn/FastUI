@@ -9,8 +9,8 @@ class View : public std::enable_shared_from_this<View>
 {
 	public:
 		enum class SizePolitics {
-			MAX,
-			MIN
+			MATCH_PARENT,
+			WRAP_CONTENT
 		};
 
 		View(SizePolitics width, SizePolitics height);
@@ -24,9 +24,14 @@ class View : public std::enable_shared_from_this<View>
 		virtual void onCharInput(wchar_t ch);
 
 		virtual void draw(int32_t width, int32_t height) = 0;
+		virtual int32_t getMinWidth(int32_t expectedHeight) const;
+		virtual int32_t getMinHeight(int32_t expectedWidth) const;
+		const SizePolitics& getWidthPolitics() const;
+		const SizePolitics& getHeightPolitics() const;
 
 		Drawer::Color m_backgroundColor;
 
+		size_t m_paddingX, m_paddingY;
 	protected:
 		SizePolitics m_width, m_height;
 		std::function<bool(const MouseEvent &ev)> m_onMouseEvent;

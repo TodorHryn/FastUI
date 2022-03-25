@@ -78,10 +78,33 @@ void TextField::draw(int32_t width, int32_t height)
 	if (m_text.size())
 	{
 		if (m_drawer->isFocused(shared_from_this()) && (m_drawer->getTimeMs() - m_lastCursorMoveTime < 1000 || (m_drawer->getTimeMs() % 1600) > 800))
-			m_drawer->drawText(0, height / 2 - m_textSize / 2, m_textSize, m_textColor, m_text, m_cursorPos);
+			m_drawer->drawText(
+				m_paddingX,
+				m_paddingY,
+				m_textSize,
+				m_textColor,
+				m_text,
+				m_cursorPos
+			);
 		else
-			m_drawer->drawText(0, height / 2 - m_textSize / 2, m_textSize, m_textColor, m_text);
+			m_drawer->drawText(
+				m_paddingX,
+				m_paddingY,
+				m_textSize,
+				m_textColor,
+				m_text
+			);
 	}
 
 	m_drawer->setState(state);
+}
+
+int32_t TextField::getMinWidth(int32_t expectedHeight) const
+{
+	return m_drawer->measureText(m_textSize, m_text).first + m_paddingX * 2;
+}
+
+int32_t TextField::getMinHeight(int32_t expectedWidth) const
+{
+	return m_textSize + m_paddingY * 2;
 }

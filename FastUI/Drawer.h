@@ -34,6 +34,7 @@ class Drawer : public std::enable_shared_from_this<Drawer>
 
 		void render();
 		void translate(int32_t x, int32_t y);
+		void translateTo(int32_t x, int32_t y);
 		void focus(std::shared_ptr<View> view);
 		void setRoot(std::shared_ptr<View> view);
 		void setState(const State &state);
@@ -44,6 +45,7 @@ class Drawer : public std::enable_shared_from_this<Drawer>
 		void drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32_t size, Color color, const std::wstring &text, int32_t cursorPos = -1);
 
 		std::pair<int32_t, int32_t> measureText(int32_t size, const std::wstring &text);
+		std::pair<int32_t, int32_t> measureText(int32_t width, int32_t size, const std::wstring &text);
 		const State& state() const;
 		int32_t width() const;
 		int32_t height() const;

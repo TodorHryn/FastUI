@@ -72,6 +72,12 @@ void Drawer::translate(int32_t x, int32_t y)
 	m_state.m_translate_y += y;
 }
 
+void Drawer::translateTo(int32_t x, int32_t y)
+{
+	m_state.m_translate_x = x;
+	m_state.m_translate_y = y;
+}
+
 void Drawer::focus(std::shared_ptr<View> view)
 {
 	m_focusedView = view;
@@ -149,11 +155,18 @@ void Drawer::drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32
 		m_charShader.use();
 		if (wordWidth == 0 && text[i] != L' ' && text[i] != L'\n')
 		{
-			for (size_t j = i; j < text.size() && text[j] != L' ' && text[i] != L'\n'; ++j)
+			size_t j = i;
+			for (; j < text.size() && text[j] != L' ' && text[j] != L'\n'; ++j)
 			{
 				Character &c = m_font.get(text[j]);
 				float charScale = static_cast<float>(size) / c.m_size;
-				wordWidth += (c.m_width + c.m_advance / 64.0f) * charScale;
+				wordWidth += c.m_advance / 64.0f * charScale;
+			}
+			if (j > i)
+			{
+				Character &c = m_font.get(text[j - 1]);
+				float charScale = static_cast<float>(size) / c.m_size;
+				wordWidth += c.m_width * charScale;
 			}
 
 			if (advanceX + wordWidth > width)
@@ -170,6 +183,7 @@ void Drawer::drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32
 			advanceX = 0;
 			advanceY += lineHeight > 0 ? lineHeight * 1.2 : size * 1.2;
 			lineHeight = 0;
+			wordWidth = 0;
 		}
 
 		if (text[i] != L'\n')
@@ -185,7 +199,7 @@ void Drawer::drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32
 			lineHeight = std::max(lineHeight, static_cast<int32_t>(c.m_height * charScale));
 
 			drawChar(c, x + advanceX, y + advanceY, size, color);
-			advanceX += static_cast<float>(c.m_advance) / 64 * charScale;
+			advanceX += c.m_advance / 64.0f * charScale;
 		}
 	}
 	if (cursorPos >= 0 && cursorPos >= text.size())
@@ -205,6 +219,66 @@ std::pair<int32_t, int32_t> Drawer::measureText(int32_t size, const std::wstring
 	}
 
 	return std::make_pair(width, height);
+}
+
+std::pair<int32_t, int32_t> Drawer::measureText(int32_t width, int32_t size, const std::wstring & text)
+{
+	float retWidth = 0;
+	float wordWidth = 0;
+	int32_t lineHeight = 0;
+	float advanceX = 0, advanceY = 0;
+	for (size_t i = 0; i < text.size(); ++i)
+	{
+		if (wordWidth == 0 && text[i] != L' ' && text[i] != L'\n')
+		{
+			size_t j = i;
+			for (; j < text.size() && text[j] != L' ' && text[j] != L'\n'; ++j)
+			{
+				Character &c = m_font.get(text[j]);
+				float charScale = static_cast<float>(size) / c.m_size;
+				wordWidth += c.m_advance / 64.0f * charScale;
+			}
+			if (j > i)
+			{
+				Character &c = m_font.get(text[j - 1]);
+				float charScale = static_cast<float>(size) / c.m_size;
+				wordWidth += c.m_width * charScale;
+			}
+
+			if (advanceX + wordWidth > width)
+			{
+				advanceX = 0;
+				advanceY += lineHeight * 1.2;
+				lineHeight = 0;
+			}
+		}
+		if (text[i] == L' ')
+			wordWidth = 0;
+		if (text[i] == L'\n')
+		{
+			advanceX = 0;
+			advanceY += lineHeight > 0 ? lineHeight * 1.2 : size * 1.2;
+			lineHeight = 0;
+			wordWidth = 0;
+		}
+
+		if (text[i] != L'\n')
+		{
+			Character &c = m_font.get(text[i]);
+			float charScale = static_cast<float>(size) / c.m_size;
+			if (advanceX + (c.m_width + c.m_advance / 64) * charScale > width)
+			{
+				advanceX = 0;
+				advanceY += lineHeight > 0 ? lineHeight * 1.2 : size * 1.2;
+				lineHeight = 0;
+			}
+			lineHeight = std::max(lineHeight, static_cast<int32_t>(c.m_height * charScale));
+
+			advanceX += c.m_advance / 64.0f * charScale;
+			retWidth = std::max(retWidth, advanceX);
+		}
+	}
+	return std::make_pair(retWidth, advanceY + size);
 }
 
 const Drawer::State& Drawer::state() const

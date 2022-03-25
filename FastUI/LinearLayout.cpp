@@ -1,4 +1,5 @@
 #include "LinearLayout.h"
+#include <algorithm>
 
 LinearLayout::LinearLayout(SizePolitics width, SizePolitics height)
 	: View(width, height) 
@@ -51,47 +52,138 @@ void LinearLayout::draw(int32_t width, int32_t height)
 	if (m_children.empty())
 		return;
 
-	if (m_orientation == Orientation::HORIZONTAL) 
+	updateBB(width, height);
+
+	Drawer::State state = m_drawer->state();
+	m_drawer->drawRectange(0, 0, width, height, m_backgroundColor);
+	for (size_t i = 0; i < m_children.size(); ++i)
 	{
-		int32_t childWidth = (width - m_spacing * (m_children.size() - 1)) / m_children.size();
-		Drawer::State state = m_drawer->state();
+		m_drawer->translateTo(m_childrenBB[i].x, m_childrenBB[i].y);
+		m_drawer->setScissor(0, 0, m_childrenBB[i].width, m_childrenBB[i].height);
+		m_children[i]->draw(m_childrenBB[i].width, m_childrenBB[i].height);
+	}
+	m_drawer->setState(state);
+}
 
-		m_drawer->drawRectange(0, 0, width, height, m_backgroundColor);
-		int32_t firstChildWidth = width - (childWidth + m_spacing) * (m_children.size() - 1);
-		m_drawer->setScissor(0, 0, firstChildWidth, height);
-		m_children[0]->draw(firstChildWidth, height);
-		m_childrenBB[0] = FastUI::Rectangle(m_drawer->state().m_translate_x, m_drawer->state().m_translate_y, firstChildWidth, height);
-		m_drawer->translate(width - (childWidth + m_spacing) * (m_children.size() - 1) + m_spacing, 0);
-		for (size_t i = 1; i < m_children.size(); ++i)
-		{
-			m_drawer->setScissor(0, 0, childWidth, height);
-			m_children[i]->draw(childWidth, height);
-			m_childrenBB[i] = FastUI::Rectangle(m_drawer->state().m_translate_x, m_drawer->state().m_translate_y, childWidth, height);
-			m_drawer->translate(childWidth + m_spacing, 0);
-		}
+int32_t LinearLayout::getMinWidth(int32_t expectedHeight) const
+{
+	if (m_children.empty())
+		return 0;
 
-		m_drawer->setState(state);
+	if (m_orientation == Orientation::VERTICAL)
+	{
+		updateBB(-1, expectedHeight);
+		int32_t width = 0;
+		for (size_t i = 0; i < m_children.size(); ++i)
+			width = std::max(width, m_children[i]->getMinWidth(m_childrenBB[i].height));
+		return width;
 	}
 	else
 	{
-		int32_t childHeight = (height - m_spacing * (m_children.size() - 1)) / m_children.size();
-		Drawer::State state = m_drawer->state();
+		int32_t width = m_spacing * (m_children.size() - 1);
+		for (size_t i = 0; i < m_children.size(); ++i)
+			width += m_children[i]->getMinWidth(expectedHeight);
+		return width;
+	}
+}
 
-		m_drawer->drawRectange(0, 0, width, height, m_backgroundColor);
-		int32_t firstChildHeight = height - (childHeight + m_spacing) * (m_children.size() - 1);
-		m_drawer->setScissor(0, 0, width, firstChildHeight);
-		m_children[0]->draw(width, firstChildHeight);
-		m_childrenBB[0] = FastUI::Rectangle(m_drawer->state().m_translate_x, m_drawer->state().m_translate_y, width, firstChildHeight);
-		m_drawer->translate(0, height - (childHeight + m_spacing) * (m_children.size() - 1) + m_spacing);
-		for (int i = 1; i < m_children.size(); ++i)
+int32_t LinearLayout::getMinHeight(int32_t expectedWidth) const
+{
+	if (m_children.empty())
+		return 0;
+
+	if (m_orientation == Orientation::HORIZONTAL)
+	{
+		updateBB(expectedWidth, -1);
+		int32_t height = 0;
+		for (size_t i = 0; i < m_children.size(); ++i)
+			height = std::max(height, m_children[i]->getMinHeight(m_childrenBB[i].width));
+		return height;
+	}
+	else 
+	{
+		int32_t height = m_spacing * (m_children.size() - 1);
+		for (size_t i = 0; i < m_children.size(); ++i)
+			height += m_children[i]->getMinHeight(expectedWidth);
+		return height;
+	}
+}
+
+void LinearLayout::updateBB(int32_t width, int32_t height) const
+{
+	if (m_orientation == Orientation::HORIZONTAL) 
+	{
+		int32_t reservedWidth = m_spacing * (m_children.size() - 1);
+		size_t notFixedChildrenCount = 0;
+
+		for (size_t i = 0; i < m_children.size(); ++i)
 		{
-			m_drawer->setScissor(0, 0, width, childHeight);
-			m_children[i]->draw(width, childHeight);
-			m_childrenBB[i] = FastUI::Rectangle(m_drawer->state().m_translate_x, m_drawer->state().m_translate_y, width, childHeight);
-			m_drawer->translate(0, childHeight + m_spacing);
+			if (m_children[i]->getWidthPolitics() == View::SizePolitics::WRAP_CONTENT)
+			{
+				int32_t w = m_children[i]->getMinWidth(height);
+				m_childrenBB[i].width = w;
+				reservedWidth += w;
+			}
+			else
+				notFixedChildrenCount++;
 		}
 
-		m_drawer->setState(state);
+		notFixedChildrenCount = std::max<size_t>(notFixedChildrenCount, 1); //If zero not fixed children, their width doesn't matter
+		int32_t childWidth = (width - reservedWidth) / notFixedChildrenCount;
+		int32_t firstChildWidth = width - reservedWidth - childWidth * (notFixedChildrenCount - 1);
+		bool firstNonFixedChild = true;
+		int32_t dx = 0;
+		for (size_t i = 0; i < m_children.size(); ++i)
+		{
+			m_childrenBB[i].x = m_drawer->state().m_translate_x + dx;
+			m_childrenBB[i].y = m_drawer->state().m_translate_y;
+			m_childrenBB[i].height = height;
+
+			if (m_children[i]->getWidthPolitics() == View::SizePolitics::MATCH_PARENT)
+			{
+				m_childrenBB[i].width = firstNonFixedChild ? firstChildWidth : childWidth;
+				firstNonFixedChild = false;
+			}
+			
+			dx += m_childrenBB[i].width + m_spacing;
+		}
+	}
+	else
+	{
+		int32_t reservedHeight = m_spacing * (m_children.size() - 1);
+		size_t notFixedChildrenCount = 0;
+
+		for (size_t i = 0; i < m_children.size(); ++i)
+		{
+			if (m_children[i]->getHeightPolitics() == View::SizePolitics::WRAP_CONTENT)
+			{
+				int32_t h = m_children[i]->getMinHeight(width);
+				m_childrenBB[i].height = h;
+				reservedHeight += h;
+			}
+			else
+				notFixedChildrenCount++;
+		}
+
+		notFixedChildrenCount = std::max<size_t>(notFixedChildrenCount, 1); //If zero not fixed children, their height doesn't matter
+		int32_t childHeight = (height - reservedHeight) / notFixedChildrenCount;
+		int32_t firstChildHeight = height - reservedHeight - childHeight * (notFixedChildrenCount - 1);
+		bool firstNonFixedChild = true;
+		int32_t dy = 0;
+		for (size_t i = 0; i < m_children.size(); ++i)
+		{
+			m_childrenBB[i].x = m_drawer->state().m_translate_x;
+			m_childrenBB[i].y = m_drawer->state().m_translate_y + dy;
+			m_childrenBB[i].width = width;
+
+			if (m_children[i]->getHeightPolitics() == View::SizePolitics::MATCH_PARENT)
+			{
+				m_childrenBB[i].height = firstNonFixedChild ? firstChildHeight : childHeight;
+				firstNonFixedChild = false;
+			}
+			
+			dy += m_childrenBB[i].height + m_spacing;
+		}
 	}
 }
 
