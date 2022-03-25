@@ -76,14 +76,14 @@ int32_t LinearLayout::getMinWidth(int32_t expectedHeight) const
 		int32_t width = 0;
 		for (size_t i = 0; i < m_children.size(); ++i)
 			width = std::max(width, m_children[i]->getMinWidth(m_childrenBB[i].height));
-		return width;
+		return width + m_paddingX * 2;
 	}
 	else
 	{
 		int32_t width = m_spacing * (m_children.size() - 1);
 		for (size_t i = 0; i < m_children.size(); ++i)
 			width += m_children[i]->getMinWidth(expectedHeight);
-		return width;
+		return width + m_paddingX * 2;
 	}
 }
 
@@ -98,14 +98,14 @@ int32_t LinearLayout::getMinHeight(int32_t expectedWidth) const
 		int32_t height = 0;
 		for (size_t i = 0; i < m_children.size(); ++i)
 			height = std::max(height, m_children[i]->getMinHeight(m_childrenBB[i].width));
-		return height;
+		return height + m_paddingY * 2;
 	}
 	else 
 	{
 		int32_t height = m_spacing * (m_children.size() - 1);
 		for (size_t i = 0; i < m_children.size(); ++i)
 			height += m_children[i]->getMinHeight(expectedWidth);
-		return height;
+		return height + m_paddingY * 2;
 	}
 }
 
@@ -113,14 +113,14 @@ void LinearLayout::updateBB(int32_t width, int32_t height) const
 {
 	if (m_orientation == Orientation::HORIZONTAL) 
 	{
-		int32_t reservedWidth = m_spacing * (m_children.size() - 1);
+		int32_t reservedWidth = m_spacing * (m_children.size() - 1) + m_paddingX * 2;
 		size_t notFixedChildrenCount = 0;
 
 		for (size_t i = 0; i < m_children.size(); ++i)
 		{
 			if (m_children[i]->getWidthPolitics() == View::SizePolitics::WRAP_CONTENT)
 			{
-				int32_t w = m_children[i]->getMinWidth(height);
+				int32_t w = m_children[i]->getMinWidth(height - m_paddingY * 2);
 				m_childrenBB[i].width = w;
 				reservedWidth += w;
 			}
@@ -135,9 +135,9 @@ void LinearLayout::updateBB(int32_t width, int32_t height) const
 		int32_t dx = 0;
 		for (size_t i = 0; i < m_children.size(); ++i)
 		{
-			m_childrenBB[i].x = m_drawer->state().m_translate_x + dx;
-			m_childrenBB[i].y = m_drawer->state().m_translate_y;
-			m_childrenBB[i].height = height;
+			m_childrenBB[i].x = m_drawer->state().m_translate_x + m_paddingX + dx;
+			m_childrenBB[i].y = m_drawer->state().m_translate_y + m_paddingY;
+			m_childrenBB[i].height = height - m_paddingY * 2;
 
 			if (m_children[i]->getWidthPolitics() == View::SizePolitics::MATCH_PARENT)
 			{
@@ -150,14 +150,14 @@ void LinearLayout::updateBB(int32_t width, int32_t height) const
 	}
 	else
 	{
-		int32_t reservedHeight = m_spacing * (m_children.size() - 1);
+		int32_t reservedHeight = m_spacing * (m_children.size() - 1) + m_paddingY * 2;
 		size_t notFixedChildrenCount = 0;
 
 		for (size_t i = 0; i < m_children.size(); ++i)
 		{
 			if (m_children[i]->getHeightPolitics() == View::SizePolitics::WRAP_CONTENT)
 			{
-				int32_t h = m_children[i]->getMinHeight(width);
+				int32_t h = m_children[i]->getMinHeight(width - m_paddingX * 2);
 				m_childrenBB[i].height = h;
 				reservedHeight += h;
 			}
@@ -172,9 +172,9 @@ void LinearLayout::updateBB(int32_t width, int32_t height) const
 		int32_t dy = 0;
 		for (size_t i = 0; i < m_children.size(); ++i)
 		{
-			m_childrenBB[i].x = m_drawer->state().m_translate_x;
-			m_childrenBB[i].y = m_drawer->state().m_translate_y + dy;
-			m_childrenBB[i].width = width;
+			m_childrenBB[i].x = m_drawer->state().m_translate_x + m_paddingX;
+			m_childrenBB[i].y = m_drawer->state().m_translate_y + m_paddingY + dy;
+			m_childrenBB[i].width = width - m_paddingX * 2;
 
 			if (m_children[i]->getHeightPolitics() == View::SizePolitics::MATCH_PARENT)
 			{

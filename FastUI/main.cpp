@@ -277,10 +277,15 @@ std::shared_ptr<LinearLayout> createChat()
 	
 	std::shared_ptr<LinearLayout> msgLay = std::make_shared<LinearLayout>();
 	msgLay->setSpacing(8);
+	msgLay->m_paddingX = 8;
+	msgLay->m_paddingY = 8;
 	lay->addChild(msgLay);
 
 	std::shared_ptr<LinearLayout> inputLay = std::make_shared<LinearLayout>(View::SizePolitics::MATCH_PARENT, View::SizePolitics::WRAP_CONTENT);
 	inputLay->setSpacing(8);
+	inputLay->m_backgroundColor = Drawer::Color(0xE0, 0xE0, 0xE0);
+	inputLay->m_paddingX = 8;
+	inputLay->m_paddingY = 8;
 	inputLay->setOrientation(LinearLayout::Orientation::HORIZONTAL);
 	lay->addChild(inputLay);
 
