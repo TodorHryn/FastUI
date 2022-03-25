@@ -4,7 +4,7 @@
 class TextField : public View
 {
 public:
-	TextField(SizePolitics width, SizePolitics height);
+	TextField(SizePolitics width = SizePolitics::MAX, SizePolitics height = SizePolitics::MAX);
 	virtual ~TextField();
 
 	virtual void setOnCharInput(std::function<bool(wchar_t ch)> onCharInput);
@@ -17,8 +17,10 @@ public:
 
 	std::wstring m_text;
 	int32_t m_textSize;
+	int32_t m_cursorPos;
 	Drawer::Color m_textColor;
 
 protected:
+	int32_t m_lastCursorMoveTime;
 	std::function<bool(wchar_t ch)> m_onCharInput;
 };

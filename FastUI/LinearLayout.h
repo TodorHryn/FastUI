@@ -12,7 +12,7 @@ class LinearLayout : public View
 			VERTICAL
 		};
 
-		LinearLayout(SizePolitics width, SizePolitics height);
+		LinearLayout(SizePolitics width = SizePolitics::MAX, SizePolitics height = SizePolitics::MAX);
 		virtual ~LinearLayout();
 
 		virtual void addChild(std::shared_ptr<View> child);

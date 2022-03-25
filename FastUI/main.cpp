@@ -9,6 +9,7 @@
 #include "LinearLayout.h"
 #include "TextField.h"
 #include "Font.h"
+#include "Util.h"
 
 GLFWwindow *window;
 std::shared_ptr<Drawer> drawer;
@@ -171,6 +172,7 @@ std::shared_ptr<LinearLayout> createCalculator()
 	number->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
 	number->m_textColor = Drawer::Color(0x00, 0x00, 0x00, 0xFF * 0.87);
 	number->m_textSize = 36;
+	number->m_cursorPos = -1;
 	number->setOnCharInput([number](wchar_t ch) {
 		for (size_t i = 0; i < calcButtons.size(); ++i)
 			for (size_t j = 0; j < calcButtons[i].size(); ++j)
@@ -218,6 +220,22 @@ std::shared_ptr<LinearLayout> createCalculator()
 	return layout;
 }
 
+std::shared_ptr<LinearLayout> createChat()
+{
+	std::shared_ptr<LinearLayout> lay = std::make_shared<LinearLayout>();
+	std::shared_ptr<TextField> field1 = std::make_shared<TextField>();
+	field1->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
+	field1->m_textColor = Drawer::Color(0x00, 0x00, 0x00);
+	field1->m_textSize = 48;
+	lay->addChild(field1);
+	std::shared_ptr<TextField> field2 = std::make_shared<TextField>();
+	field2->m_backgroundColor = Drawer::Color(0xE0, 0xE0, 0xE0);
+	field2->m_textColor = Drawer::Color(0x00, 0x00, 0x00);
+	field2->m_textSize = 48;
+	lay->addChild(field2);
+	return lay;
+}
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
 	drawer->setSize(width, height);
@@ -253,7 +271,7 @@ void character_callback(GLFWwindow* window, unsigned int codepoint)
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	KeyboardEvent::Button btn;
+	KeyboardEvent::Button btn = KeyboardEvent::Button::NONE;
 	KeyboardEvent::Action act;
 
 	if (action == GLFW_PRESS)
@@ -264,10 +282,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		act = KeyboardEvent::Action::REPEAT;
 
 	if (key == GLFW_KEY_BACKSPACE)
-	{
 		btn = KeyboardEvent::Button::BACKSPACE;
+	else if (key == GLFW_KEY_LEFT)
+		btn = KeyboardEvent::Button::LEFT;
+	else if (key == GLFW_KEY_RIGHT)
+		btn = KeyboardEvent::Button::RIGHT;
+
+	if (btn != KeyboardEvent::Button::NONE)
 		drawer->onKeyboardEvent(KeyboardEvent(btn, act));
-	}
 }
 
 int main()
@@ -301,12 +323,17 @@ int main()
 
 	drawer = std::make_shared<Drawer>(window, 1280, 720);
 	//mainLayout = createLayout(true, 10);
-	mainLayout = createCalculator();
+	//mainLayout = createCalculator();
+	mainLayout = createChat();
 	drawer->setRoot(mainLayout);
 
 	while (!glfwWindowShouldClose(window)) {
+		double prevTime = glfwGetTime();
 		drawer->render();
-		glfwPollEvents();		
+		glfwPollEvents();
+		int32_t time = (1 / 60.0f - glfwGetTime() + prevTime) * 1000 * 1000;
+		if (time >= 0)
+			SleepInUs(time);
 	}
 	
 	glfwTerminate();

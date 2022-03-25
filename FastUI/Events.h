@@ -25,7 +25,10 @@ struct KeyboardEvent
 {
 	enum class Button
 	{
-		BACKSPACE
+		NONE,
+		BACKSPACE,
+		LEFT,
+		RIGHT
 	};
 
 	enum class Action

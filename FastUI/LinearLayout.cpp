@@ -3,6 +3,7 @@
 LinearLayout::LinearLayout(SizePolitics width, SizePolitics height)
 	: View(width, height) 
 	, m_orientation(Orientation::VERTICAL)
+	, m_spacing(0)
 {
 }
 

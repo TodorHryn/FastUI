@@ -117,9 +117,8 @@ void Drawer::drawRectange(int32_t x, int32_t y, int32_t width, int32_t height, C
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
-void Drawer::drawText(int32_t x, int32_t y, int32_t size, Color color, const std::wstring &text)
+void Drawer::drawText(int32_t x, int32_t y, int32_t size, Color color, const std::wstring &text, int32_t cursorPos)
 {
-	m_charShader.use();
 	if (m_state.m_scissorWidth > 0 && m_state.m_scissorHeight > 0)
 	{
 		glEnable(GL_SCISSOR_TEST);
@@ -127,13 +126,19 @@ void Drawer::drawText(int32_t x, int32_t y, int32_t size, Color color, const std
 	}
 
 	float m_advance = 0;
-	for (wchar_t ch : text)
+	for (size_t i = 0; i < text.size(); ++i)
 	{
-		Character &c = m_font.get(ch);
+		if (cursorPos == i)
+			drawRectange(x + m_advance, y, 2, size, Drawer::Color(0x00, 0x00, 0x00));
+
+		m_charShader.use();
+		Character &c = m_font.get(text[i]);
 		float charScale = static_cast<float>(size) / c.m_size;
 		drawChar(c, x + m_advance, y, size, color);
 		m_advance += static_cast<float>(c.m_advance) / 64 * charScale;
 	}
+	if (cursorPos >= 0 && cursorPos >= text.size())
+		drawRectange(x + m_advance, y, 2, size, Drawer::Color(0x00, 0x00, 0x00));
 
 	glDisable(GL_SCISSOR_TEST);
 }
@@ -232,6 +237,16 @@ int32_t Drawer::width() const
 int32_t Drawer::height() const
 {
 	return m_height;
+}
+
+bool Drawer::isFocused(std::shared_ptr<View> view)
+{
+	return m_focusedView == view;
+}
+
+int32_t Drawer::getTimeMs() const
+{
+	return glfwGetTime() * 1000;
 }
 
 void Drawer::drawChar(const Character &c, int32_t x, int32_t y, int32_t size, Color color)
