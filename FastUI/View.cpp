@@ -39,6 +39,11 @@ void View::onCharInput(wchar_t ch)
 {
 }
 
+bool View::onScroll(int32_t x, int32_t y, double xoffset, double yoffset)
+{
+	return false;
+}
+
 int32_t View::getMinWidth(int32_t expectedHeight) const
 {
 	return 100;

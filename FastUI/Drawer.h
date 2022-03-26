@@ -31,6 +31,7 @@ class Drawer : public std::enable_shared_from_this<Drawer>
 
 		void onCharInput(wchar_t ch);
 		void onKeyboardEvent(const KeyboardEvent &ev);
+		void onScroll(int32_t x, int32_t y, double xoffset, double yoffset);
 
 		void render();
 		void translate(int32_t x, int32_t y);

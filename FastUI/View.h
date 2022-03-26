@@ -19,6 +19,7 @@ class View : public std::enable_shared_from_this<View>
 		virtual void setOnMouseEvent(std::function<bool(const MouseEvent &ev)> handler);
 		virtual void setDrawer(std::shared_ptr<Drawer> drawer);
 
+		virtual bool onScroll(int32_t x, int32_t y, double xoffset, double yoffset);
 		virtual bool onMouseEvent(const MouseEvent &ev);
 		virtual void onKeyboardEvent(const KeyboardEvent &ev);
 		virtual void onCharInput(wchar_t ch);

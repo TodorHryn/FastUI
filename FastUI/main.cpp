@@ -275,7 +275,6 @@ std::shared_ptr<LinearLayout> createChat()
 {
 	std::shared_ptr<LinearLayout> lay = std::make_shared<LinearLayout>();
 	lay->m_backgroundColor = Drawer::Color(0xE0, 0xE0, 0xE0);
-	lay->setSpacing(8);
 	
 	std::shared_ptr<LinearLayout> msgLay = std::make_shared<LinearLayout>();
 	msgLay->setSpacing(8);
@@ -285,7 +284,7 @@ std::shared_ptr<LinearLayout> createChat()
 
 	std::shared_ptr<LinearLayout> inputLay = std::make_shared<LinearLayout>(View::SizePolitics::MATCH_PARENT, View::SizePolitics::WRAP_CONTENT);
 	inputLay->setSpacing(8);
-	inputLay->m_backgroundColor = Drawer::Color(0xE0, 0xE0, 0xE0);
+	inputLay->m_backgroundColor = Drawer::Color(0xC0, 0xC0, 0xC0);
 	inputLay->m_paddingX = 8;
 	inputLay->m_paddingY = 8;
 	inputLay->setOrientation(LinearLayout::Orientation::HORIZONTAL);
@@ -389,6 +388,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		drawer->onKeyboardEvent(KeyboardEvent(btn, act));
 }
 
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	double x, y;
+	glfwGetCursorPos(window, &x, &y);
+	drawer->onScroll(x, y, xoffset, yoffset);
+}
+
 int main()
 {
 	glfwInit();
@@ -414,7 +420,8 @@ int main()
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);  
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
 	glfwSetKeyCallback(window, key_callback);
-	glfwSetCharCallback(window, character_callback);;
+	glfwSetCharCallback(window, character_callback);
+	glfwSetScrollCallback(window, scroll_callback);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

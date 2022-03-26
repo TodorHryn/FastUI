@@ -52,6 +52,11 @@ void Drawer::onKeyboardEvent(const KeyboardEvent &ev)
 		m_focusedView->onKeyboardEvent(ev);
 }
 
+void Drawer::onScroll(int32_t x, int32_t y, double xoffset, double yoffset)
+{
+	m_root->onScroll(x, y, xoffset, yoffset);
+}
+
 void Drawer::clear()
 {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

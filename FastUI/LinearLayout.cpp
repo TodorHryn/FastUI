@@ -1,10 +1,19 @@
 #include "LinearLayout.h"
 #include <algorithm>
 
+float SCROLL_X_MULTIPLIER = 30;
+float SCROLL_Y_MULTIPLIER = 30;
+
 LinearLayout::LinearLayout(SizePolitics width, SizePolitics height)
 	: View(width, height) 
 	, m_orientation(Orientation::VERTICAL)
 	, m_spacing(0)
+	, m_scrollX(0)
+	, m_scrollY(0)
+	, m_maxScrollX(0)
+	, m_maxScrollY(0)
+	, m_scrollbarBackgroundColor(0x00, 0x00, 0x00, 0x40)
+	, m_scrollbarColor(0x00, 0x00, 0x00, 0x80)
 {
 }
 
@@ -29,22 +38,53 @@ void LinearLayout::setSpacing(int32_t spacing)
 	m_spacing = spacing;
 }
 
-bool LinearLayout::onMouseEvent(const MouseEvent &ev)
+bool LinearLayout::onScroll(int32_t x, int32_t y, double xoffset, double yoffset)
 {
+	x += m_scrollX;
+	y += m_scrollY;
+
 	for (size_t i = 0; i < m_children.size(); ++i)
 	{
 		const FastUI::Rectangle &rect = m_childrenBB[i];
-		if (ev.x >= rect.x
-			&& ev.x <= rect.x + rect.width
-			&& ev.y >= rect.y 
-			&& ev.y <= rect.y + rect.height)
+		if (x >= rect.x
+			&& x <= rect.x + rect.width
+			&& y >= rect.y 
+			&& y <= rect.y + rect.height)
 		{
-			if (m_children[i]->onMouseEvent(ev))
+			if (m_children[i]->onScroll(x, y, xoffset, yoffset))
 				return true;
 		}
 	}
 
-	return View::onMouseEvent(ev);
+	int32_t prevScrollX = m_scrollX, prevScrollY = m_scrollY;
+	m_scrollX = std::max<int32_t>(0, std::min<int32_t>(m_maxScrollX, m_scrollX - xoffset * SCROLL_X_MULTIPLIER));
+	m_scrollY = std::max<int32_t>(0, std::min<int32_t>(m_maxScrollY, m_scrollY - yoffset * SCROLL_Y_MULTIPLIER));
+	if (m_scrollX != prevScrollX || m_scrollY != prevScrollY)
+		return true;
+
+	return View::onScroll(x, y, xoffset, yoffset);
+}
+
+bool LinearLayout::onMouseEvent(const MouseEvent &ev)
+{
+	MouseEvent realEv = ev;
+	realEv.x += m_scrollX;
+	realEv.y += m_scrollY;
+
+	for (size_t i = 0; i < m_children.size(); ++i)
+	{
+		const FastUI::Rectangle &rect = m_childrenBB[i];
+		if (realEv.x >= rect.x
+			&& realEv.x <= rect.x + rect.width
+			&& realEv.y >= rect.y 
+			&& realEv.y <= rect.y + rect.height)
+		{
+			if (m_children[i]->onMouseEvent(realEv))
+				return true;
+		}
+	}
+
+	return View::onMouseEvent(realEv);
 }
 
 void LinearLayout::draw(int32_t width, int32_t height)
@@ -53,14 +93,40 @@ void LinearLayout::draw(int32_t width, int32_t height)
 		return;
 
 	updateBB(width, height);
+	m_maxScrollX = 0;
+	m_maxScrollY = 0;
+	int32_t minX = m_childrenBB[0].x - m_paddingX;
+	int32_t minY = m_childrenBB[0].y - m_paddingY;
+	for (size_t i = 0; i < m_children.size(); ++i)
+	{
+		m_maxScrollX = std::max<int32_t>(m_maxScrollX, m_childrenBB[i].x + m_childrenBB[i].width + m_paddingX - minX - width);
+		m_maxScrollY = std::max<int32_t>(m_maxScrollY, m_childrenBB[i].y + m_childrenBB[i].height + m_paddingY - minY - height);
+	}
+	m_scrollX = std::min(m_scrollX, m_maxScrollX);
+	m_scrollY = std::min(m_scrollY, m_maxScrollY);
 
 	Drawer::State state = m_drawer->state();
 	m_drawer->drawRectange(0, 0, width, height, m_backgroundColor);
 	for (size_t i = 0; i < m_children.size(); ++i)
 	{
-		m_drawer->translateTo(m_childrenBB[i].x, m_childrenBB[i].y);
+		m_drawer->translateTo(m_childrenBB[i].x - m_scrollX, m_childrenBB[i].y - m_scrollY);
 		m_drawer->setScissor(0, 0, m_childrenBB[i].width, m_childrenBB[i].height);
 		m_children[i]->draw(m_childrenBB[i].width, m_childrenBB[i].height);
+	}
+	m_drawer->setState(state);
+	if (m_maxScrollY > 0)
+	{
+		m_drawer->drawRectange(width - 8, 0, 8, height, m_scrollbarBackgroundColor);
+		float scrollbarY = static_cast<float>(m_scrollY) / (m_maxScrollY + height) * height;
+		float scrollbarHeight = static_cast<float>(height) / (m_maxScrollY + height) * height;
+		m_drawer->drawRectange(width - 6, scrollbarY, 4, scrollbarHeight, m_scrollbarColor);
+	}
+	if (m_maxScrollX > 0)
+	{
+		m_drawer->drawRectange(0, height - 8, width, 8, m_scrollbarBackgroundColor);
+		float scrollbarX = static_cast<float>(m_scrollX) / (m_maxScrollX + width) * width;
+		float scrollbarWidth = static_cast<float>(width) / (m_maxScrollX + width) * width;
+		m_drawer->drawRectange(scrollbarX, height - 6, scrollbarWidth, 4, m_scrollbarColor);
 	}
 	m_drawer->setState(state);
 }
