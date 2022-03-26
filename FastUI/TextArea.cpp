@@ -26,7 +26,7 @@ void TextArea::onKeyboardEvent(const KeyboardEvent &ev)
 
 int32_t TextArea::getMinHeight(int32_t expectedWidth) const
 {
-	return m_drawer->measureText(expectedWidth, m_textSize, m_text).second + m_paddingY * 2;
+	return m_drawer->measureText(expectedWidth - m_paddingX * 2, m_textSize, m_text).second + m_paddingY * 2;
 }
 
 void TextArea::draw(int32_t width, int32_t height)

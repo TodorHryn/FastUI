@@ -150,7 +150,6 @@ void Drawer::drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32
 {
 	enableScissor();
 	float wordWidth = 0;
-	int32_t lineHeight = 0;
 	float advanceX = 0, advanceY = 0;
 	for (size_t i = 0; i < text.size(); ++i)
 	{
@@ -174,11 +173,10 @@ void Drawer::drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32
 				wordWidth += c.m_width * charScale;
 			}
 
-			if (advanceX + wordWidth > width)
+			if (advanceX + wordWidth > width && wordWidth < width)
 			{
 				advanceX = 0;
-				advanceY += lineHeight * 1.2;
-				lineHeight = 0;
+				advanceY += size;
 			}
 		}
 		if (text[i] == L' ')
@@ -186,8 +184,7 @@ void Drawer::drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32
 		if (text[i] == L'\n')
 		{
 			advanceX = 0;
-			advanceY += lineHeight > 0 ? lineHeight * 1.2 : size * 1.2;
-			lineHeight = 0;
+			advanceY += size;
 			wordWidth = 0;
 		}
 
@@ -198,10 +195,8 @@ void Drawer::drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32
 			if (advanceX + (c.m_width + c.m_advance / 64) * charScale > width)
 			{
 				advanceX = 0;
-				advanceY += lineHeight > 0 ? lineHeight * 1.2 : size * 1.2;
-				lineHeight = 0;
+				advanceY += size;
 			}
-			lineHeight = std::max(lineHeight, static_cast<int32_t>(c.m_height * charScale));
 
 			drawChar(c, x + advanceX, y + advanceY, size, color);
 			advanceX += c.m_advance / 64.0f * charScale;
@@ -230,7 +225,6 @@ std::pair<int32_t, int32_t> Drawer::measureText(int32_t width, int32_t size, con
 {
 	float retWidth = 0;
 	float wordWidth = 0;
-	int32_t lineHeight = 0;
 	float advanceX = 0, advanceY = 0;
 	for (size_t i = 0; i < text.size(); ++i)
 	{
@@ -250,11 +244,10 @@ std::pair<int32_t, int32_t> Drawer::measureText(int32_t width, int32_t size, con
 				wordWidth += c.m_width * charScale;
 			}
 
-			if (advanceX + wordWidth > width)
+			if (advanceX + wordWidth > width && wordWidth < width)
 			{
 				advanceX = 0;
-				advanceY += lineHeight * 1.2;
-				lineHeight = 0;
+				advanceY += size;
 			}
 		}
 		if (text[i] == L' ')
@@ -262,8 +255,7 @@ std::pair<int32_t, int32_t> Drawer::measureText(int32_t width, int32_t size, con
 		if (text[i] == L'\n')
 		{
 			advanceX = 0;
-			advanceY += lineHeight > 0 ? lineHeight * 1.2 : size * 1.2;
-			lineHeight = 0;
+			advanceY += size;
 			wordWidth = 0;
 		}
 
@@ -274,11 +266,9 @@ std::pair<int32_t, int32_t> Drawer::measureText(int32_t width, int32_t size, con
 			if (advanceX + (c.m_width + c.m_advance / 64) * charScale > width)
 			{
 				advanceX = 0;
-				advanceY += lineHeight > 0 ? lineHeight * 1.2 : size * 1.2;
-				lineHeight = 0;
+				advanceY += size;
 			}
-			lineHeight = std::max(lineHeight, static_cast<int32_t>(c.m_height * charScale));
-
+			
 			advanceX += c.m_advance / 64.0f * charScale;
 			retWidth = std::max(retWidth, advanceX);
 		}
