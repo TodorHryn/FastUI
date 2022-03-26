@@ -79,7 +79,10 @@ bool LinearLayout::onMouseEvent(const MouseEvent &ev)
 			&& realEv.y >= rect.y 
 			&& realEv.y <= rect.y + rect.height)
 		{
-			if (m_children[i]->onMouseEvent(realEv))
+			MouseEvent passEv = realEv;
+			passEv.x -= rect.x;
+			passEv.y -= rect.y;
+			if (m_children[i]->onMouseEvent(passEv))
 				return true;
 		}
 	}
@@ -109,7 +112,7 @@ void LinearLayout::draw(int32_t width, int32_t height)
 	m_drawer->drawRectange(0, 0, width, height, m_backgroundColor);
 	for (size_t i = 0; i < m_children.size(); ++i)
 	{
-		m_drawer->translateTo(m_childrenBB[i].x - m_scrollX, m_childrenBB[i].y - m_scrollY);
+		m_drawer->translateTo(state.m_translate_x + m_childrenBB[i].x - m_scrollX, state.m_translate_y + m_childrenBB[i].y - m_scrollY);
 		m_drawer->setScissor(0, 0, m_childrenBB[i].width, m_childrenBB[i].height);
 		m_children[i]->draw(m_childrenBB[i].width, m_childrenBB[i].height);
 	}
@@ -201,8 +204,8 @@ void LinearLayout::updateBB(int32_t width, int32_t height) const
 		int32_t dx = 0;
 		for (size_t i = 0; i < m_children.size(); ++i)
 		{
-			m_childrenBB[i].x = m_drawer->state().m_translate_x + m_paddingX + dx;
-			m_childrenBB[i].y = m_drawer->state().m_translate_y + m_paddingY;
+			m_childrenBB[i].x = m_paddingX + dx;
+			m_childrenBB[i].y = m_paddingY;
 			m_childrenBB[i].height = height - m_paddingY * 2;
 
 			if (m_children[i]->getWidthPolitics() == View::SizePolitics::MATCH_PARENT)
@@ -238,8 +241,8 @@ void LinearLayout::updateBB(int32_t width, int32_t height) const
 		int32_t dy = 0;
 		for (size_t i = 0; i < m_children.size(); ++i)
 		{
-			m_childrenBB[i].x = m_drawer->state().m_translate_x + m_paddingX;
-			m_childrenBB[i].y = m_drawer->state().m_translate_y + m_paddingY + dy;
+			m_childrenBB[i].x = m_paddingX;
+			m_childrenBB[i].y = m_paddingY + dy;
 			m_childrenBB[i].width = width - m_paddingX * 2;
 
 			if (m_children[i]->getHeightPolitics() == View::SizePolitics::MATCH_PARENT)
