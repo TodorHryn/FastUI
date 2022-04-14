@@ -8,7 +8,8 @@ class ShaderProgram {
 	public:
 		ShaderProgram();
 		explicit ShaderProgram(std::string name);
-		~ShaderProgram();
+		ShaderProgram(const ShaderProgram &sh) = delete;
+		virtual ~ShaderProgram();
 
 		void load(std::string name);
 
@@ -20,6 +21,8 @@ class ShaderProgram {
 		void set4fv(std::string name, const glm::vec4 &vector);
 		void setMatrix4fv(std::string name, const glm::mat4 &matrix);
 		void setMatrix4fv(std::string name, float *matrix);
+
+		void operator=(const ShaderProgram&) = delete;
 
 	private:
 		GLuint m_shaderProgram;
