@@ -21,8 +21,10 @@ class LinearLayout : public View
 
 		virtual bool onScroll(int32_t x, int32_t y, double xoffset, double yoffset) override;
 		virtual bool onMouseEvent(const MouseEvent &ev) override;
+		virtual bool onMouseEventOverlay(const MouseEvent& ev) override;
 
 		virtual void draw(int32_t width, int32_t height) override;
+		virtual void drawOverlay(int32_t width, int32_t height) override;
 		virtual int32_t getMinWidth(int32_t expectedHeight) const override;
 		virtual int32_t getMinHeight(int32_t expectedWidth) const override;
 

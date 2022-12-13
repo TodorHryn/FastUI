@@ -166,6 +166,7 @@ void DrawerOpenGL::render()
 	m_state = State();
 
 	m_root->draw(m_width, m_height);
+	m_root->drawOverlay(m_width, m_height);
 	glfwSwapBuffers(m_window);
 }
 

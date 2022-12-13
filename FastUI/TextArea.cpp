@@ -24,6 +24,11 @@ void TextArea::onKeyboardEvent(const KeyboardEvent &ev)
 	}
 }
 
+int32_t TextArea::getMinWidth(int32_t expectedHeight) const
+{
+	return 0; //TODO: calculate when width and height are WRAP_CONTENT
+}
+
 int32_t TextArea::getMinHeight(int32_t expectedWidth) const
 {
 	return m_drawer->measureText(expectedWidth - m_paddingX * 2, m_textSize, m_text).second + m_paddingY * 2;

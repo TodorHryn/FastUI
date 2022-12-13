@@ -5,7 +5,7 @@
 class Button : public View
 {
 	public:
-		Button(SizePolitics width = SizePolitics::MATCH_PARENT, SizePolitics height = SizePolitics::MATCH_PARENT);
+		Button(SizePolitics width = SizePolitics::WRAP_CONTENT, SizePolitics height = SizePolitics::MATCH_PARENT);
 		virtual ~Button();
 
 		virtual bool onMouseEvent(const MouseEvent &ev) override;

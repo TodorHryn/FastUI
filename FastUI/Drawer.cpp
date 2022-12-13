@@ -30,7 +30,8 @@ void Drawer::onKeyboardEvent(const KeyboardEvent &ev)
 
 void Drawer::onMouseEvent(const MouseEvent &ev)
 {
-	m_root->onMouseEvent(ev);
+	if (!m_root->onMouseEventOverlay(ev))
+		m_root->onMouseEvent(ev);
 }
 
 void Drawer::onScroll(int32_t x, int32_t y, double xoffset, double yoffset)

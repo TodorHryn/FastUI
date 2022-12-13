@@ -44,6 +44,15 @@ bool View::onScroll(int32_t x, int32_t y, double xoffset, double yoffset)
 	return false;
 }
 
+bool View::onMouseEventOverlay(const MouseEvent& ev)
+{
+	return false;
+}
+
+void View::drawOverlay(int32_t width, int32_t height)
+{
+}
+
 int32_t View::getMinWidth(int32_t expectedHeight) const
 {
 	return 100;
