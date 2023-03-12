@@ -30,6 +30,13 @@ namespace fastui
 		struct Image {
 
 		};
+		struct TextSize {	//Baseline is Y = 0
+			int32_t height() const { return maxY - minY; }
+
+			int32_t width = 0;
+			int32_t maxY = 0;
+			int32_t minY = 0;
+		};
 
 		Drawer(int32_t width, int32_t height);
 		virtual ~Drawer();
@@ -39,11 +46,11 @@ namespace fastui
 		virtual void drawRectangle(int32_t x, int32_t y, int32_t width, int32_t height, Color color) = 0;
 		virtual void drawRoundedRectangle(int32_t x, int32_t y, int32_t width, int32_t height, Color color) = 0;
 		virtual void drawShadowBorder(int32_t x, int32_t y, int32_t width, int32_t height, int32_t thickness, Color color) = 0;
-		virtual void drawText(int32_t x, int32_t y, int32_t size, Color color, const UnicodeString& text, int32_t cursorPos = -1) = 0;
-		virtual void drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32_t size, Color color, const UnicodeString& text, int32_t cursorPos = -1) = 0;
+		virtual void drawText(int32_t x, int32_t baselineY, int32_t size, Color color, const UnicodeString& text, int32_t cursorPos = -1) = 0;
+		virtual void drawText(int32_t x, int32_t baselineY, int32_t width, int32_t height, int32_t size, Color color, const UnicodeString& text, int32_t cursorPos = -1) = 0;
 		virtual void drawImage(int32_t x, int32_t y, int32_t width, int32_t height, const Image& img) = 0;
-		virtual std::pair<int32_t, int32_t> measureText(int32_t size, const UnicodeString& text) = 0;
-		virtual std::pair<int32_t, int32_t> measureText(int32_t width, int32_t size, const UnicodeString& text) = 0;
+		virtual TextSize measureText(int32_t size, const UnicodeString& text) = 0;
+		virtual TextSize measureText(int32_t width, int32_t size, const UnicodeString& text) = 0;
 
 		virtual int32_t getTimeMs() const = 0;
 

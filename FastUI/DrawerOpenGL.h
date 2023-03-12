@@ -15,11 +15,11 @@ namespace fastui
 		virtual void drawRectangle(int32_t x, int32_t y, int32_t width, int32_t height, Color color) override;
 		virtual void drawRoundedRectangle(int32_t x, int32_t y, int32_t width, int32_t height, Color color) override;
 		virtual void drawShadowBorder(int32_t x, int32_t y, int32_t width, int32_t height, int32_t thickness, Color color) override;
-		virtual void drawText(int32_t x, int32_t y, int32_t size, Color color, const UnicodeString& text, int32_t cursorPos) override;
-		virtual void drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32_t size, Color color, const UnicodeString& text, int32_t cursorPos) override;
+		virtual void drawText(int32_t x, int32_t baselineY, int32_t size, Color color, const UnicodeString& text, int32_t cursorPos) override;
+		virtual void drawText(int32_t x, int32_t baselineY, int32_t width, int32_t height, int32_t size, Color color, const UnicodeString& text, int32_t cursorPos) override;
 		virtual void drawImage(int32_t x, int32_t y, int32_t width, int32_t height, const Image& img) override;
-		virtual std::pair<int32_t, int32_t> DrawerOpenGL::measureText(int32_t size, const UnicodeString& text) override;
-		virtual std::pair<int32_t, int32_t> DrawerOpenGL::measureText(int32_t width, int32_t size, const UnicodeString& text) override;
+		virtual TextSize measureText(int32_t size, const UnicodeString& text) override;
+		virtual TextSize measureText(int32_t width, int32_t size, const UnicodeString& text) override;
 
 		virtual int32_t getTimeMs() const override;
 

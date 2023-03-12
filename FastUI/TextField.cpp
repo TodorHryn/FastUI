@@ -91,7 +91,7 @@ namespace fastui
 			if (m_drawer->isFocused(shared_from_this()) && (m_drawer->getTimeMs() - m_lastCursorMoveTime < 1000 || (m_drawer->getTimeMs() % 1600) > 800))
 				m_drawer->drawText(
 					m_paddingX,
-					m_paddingY,
+					m_paddingY + m_textSize,
 					m_textSize,
 					m_textColor,
 					m_text,
@@ -100,7 +100,7 @@ namespace fastui
 			else
 				m_drawer->drawText(
 					m_paddingX,
-					m_paddingY,
+					m_paddingY + m_textSize,
 					m_textSize,
 					m_textColor,
 					m_text
@@ -112,7 +112,7 @@ namespace fastui
 
 	int32_t TextField::getMinWidth(int32_t expectedHeight) const
 	{
-		return m_drawer->measureText(m_textSize, m_text).first + m_paddingX * 2;
+		return m_drawer->measureText(m_textSize, m_text).width + m_paddingX * 2;
 	}
 
 	int32_t TextField::getMinHeight(int32_t expectedWidth) const

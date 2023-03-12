@@ -403,8 +403,8 @@ int main()
 	auto drawer = std::make_shared<DrawerOpenGL>(1280, 720);
 	//drawer->setRoot(createLayout(true, 10));
 	//drawer->setRoot(createCalculator(drawer));
-	//drawer->setRoot(createChat());
-	drawer->setRoot(createControls());
+	drawer->setRoot(createChat());
+	//drawer->setRoot(createControls());
 	drawer->execute();
 	return 0;
 }

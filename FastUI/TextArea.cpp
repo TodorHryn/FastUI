@@ -33,7 +33,7 @@ namespace fastui
 
 	int32_t TextArea::getMinHeight(int32_t expectedWidth) const
 	{
-		return m_drawer->measureText(expectedWidth - m_paddingX * 2, m_textSize, m_text).second + m_paddingY * 2;
+		return m_drawer->measureText(expectedWidth - m_paddingX * 2, m_textSize, m_text).height() + m_paddingY * 2;
 	}
 
 	void TextArea::draw(int32_t width, int32_t height)
@@ -50,7 +50,7 @@ namespace fastui
 			if (m_drawer->isFocused(shared_from_this()) && (m_drawer->getTimeMs() - m_lastCursorMoveTime < 1000 || (m_drawer->getTimeMs() % 1600) > 800))
 				m_drawer->drawText(
 					m_paddingX,
-					m_paddingY,
+					m_paddingY + m_textSize,
 					width - m_paddingX * 2,
 					height - m_paddingY * 2,
 					m_textSize,
@@ -61,7 +61,7 @@ namespace fastui
 			else
 				m_drawer->drawText(
 					m_paddingX,
-					m_paddingY,
+					m_paddingY + m_textSize,
 					width - m_paddingX * 2,
 					height - m_paddingY * 2,
 					m_textSize,

@@ -41,7 +41,7 @@ namespace fastui
 		if (m_text.size())
 		{
 			auto size = m_drawer->measureText(m_textSize, m_text);
-			m_drawer->drawText(width / 2 - size.first / 2, 0, m_textSize, m_textColor, m_text);
+			m_drawer->drawText(width / 2 - size.width / 2, height / 2 + size.height() / 2, m_textSize, m_textColor, m_text);
 		}
 
 		m_drawer->setState(state);
@@ -49,7 +49,7 @@ namespace fastui
 
 	int32_t Button::getMinWidth(int32_t expectedHeight) const
 	{
-		return m_drawer->measureText(m_textSize, m_text).first + m_paddingX * 2;
+		return m_drawer->measureText(m_textSize, m_text).width + m_paddingX * 2;
 	}
 
 	int32_t Button::getMinHeight(int32_t expectedWidth) const

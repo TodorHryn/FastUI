@@ -40,8 +40,8 @@ namespace fastui
 
 		if (m_text.size())
 		{
-			auto size = m_drawer->measureText(m_textSize, m_text);
-			m_drawer->drawText(m_paddingX * 2 + m_checkboxSize, height / 2 - m_textSize / 2, m_textSize, m_textColor, m_text);
+			Drawer::TextSize size = m_drawer->measureText(m_textSize, m_text);
+			m_drawer->drawText(m_paddingX * 2 + m_checkboxSize, height / 2 + size.height() / 2, m_textSize, m_textColor, m_text);
 		}
 
 		m_drawer->setState(state);
@@ -49,7 +49,7 @@ namespace fastui
 
 	int32_t Checkbox::getMinWidth(int32_t expectedHeight) const
 	{
-		return m_checkboxSize + m_drawer->measureText(m_textSize, m_text).first + m_paddingX * 3;
+		return m_checkboxSize + m_drawer->measureText(m_textSize, m_text).width + m_paddingX * 3;
 	}
 
 	int32_t Checkbox::getMinHeight(int32_t expectedWidth) const

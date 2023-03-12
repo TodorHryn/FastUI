@@ -98,8 +98,8 @@ namespace fastui
 
 		if (getSelectedItem().size())
 		{
-			m_drawer->drawText(m_paddingX, 0, m_textSize, m_textColor, getSelectedItem());
-			m_drawer->drawText(width - m_textSize, 0, m_textSize, m_textColor, "🞃");
+			m_drawer->drawText(m_paddingX, m_textSize, m_textSize, m_textColor, getSelectedItem());
+			m_drawer->drawText(width - m_textSize, m_textSize, m_textSize, m_textColor, "🞃");
 		}
 
 		m_drawer->setState(state);
@@ -115,12 +115,7 @@ namespace fastui
 			Drawer::State state = m_drawer->state();
 
 			//Draw border
-			int32_t totalHeight = 0;
-			for (int i = 0; i < m_list.size(); ++i)
-			{
-				auto size = m_drawer->measureText(m_textSize, m_list[i]); //TODO: optimize
-				totalHeight += size.second + m_paddingY * 2;
-			}
+			int32_t totalHeight = (m_textSize + m_paddingY * 2) * m_list.size();
 			m_drawer->drawRoundedRectangle(0, 0, width, totalHeight, Drawer::Color(0xA0, 0xA0, 0xA0));
 			m_drawer->drawRoundedRectangle(1, 1, width - 2, totalHeight - 1, m_backgroundColor);
 
@@ -128,15 +123,15 @@ namespace fastui
 			for (int i = 0; i < m_list.size(); ++i)
 			{
 				int itemId = screenposToId(i);
-				auto size = m_drawer->measureText(m_textSize, m_list[itemId]);
 				int32_t translateY = m_drawer->state().m_translate_y - state.m_translate_y;
-				m_listBB[itemId] = fastui::Rectangle(0, translateY, width, size.second + m_paddingY * 2);
+				m_listBB[itemId] = fastui::Rectangle(0, translateY, width, m_textSize + m_paddingY * 2);
 				if (m_hoverOverlay && itemId == m_hoveredItem)
-					m_drawer->drawRoundedRectangle(1, 1, width - 2, size.second + m_paddingY * 2 - 1, m_hoverColor);
-				m_drawer->drawText(m_paddingX, 0, m_textSize, m_textColor, m_list[itemId]);
-				m_drawer->translate(0, size.second + m_paddingY * 2);
+					m_drawer->drawRoundedRectangle(1, 1, width - 2, m_textSize + m_paddingY * 2 - 1, m_hoverColor);
+				m_drawer->drawText(m_paddingX, m_textSize, m_textSize, m_textColor, m_list[itemId]);
+				m_drawer->translate(0, m_textSize + m_paddingY * 2);
 			}
 			m_drawer->setState(state);
+			m_drawer->drawText(width - m_textSize, m_textSize, m_textSize, m_textColor, "🞃");
 		}
 	}
 
@@ -146,7 +141,7 @@ namespace fastui
 		{
 			m_minWidth = 0;
 			for (int32_t i = 0; i < m_list.size(); ++i)
-				m_minWidth = std::max(m_minWidth, static_cast<int32_t>(m_drawer->measureText(m_textSize, m_list[i]).first + m_textSize + m_paddingX * 2));
+				m_minWidth = std::max(m_minWidth, static_cast<int32_t>(m_drawer->measureText(m_textSize, m_list[i]).width + m_textSize + m_paddingX * 2));
 		}
 
 		return m_minWidth;

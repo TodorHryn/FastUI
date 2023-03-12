@@ -287,27 +287,27 @@ namespace fastui
 		drawRectangle(0, height, width, thickness, color);					//Bottom
 	}
 
-	void DrawerOpenGL::drawText(int32_t x, int32_t y, int32_t size, Color color, const UnicodeString& text, int32_t cursorPos)
+	void DrawerOpenGL::drawText(int32_t x, int32_t baselineY, int32_t size, Color color, const UnicodeString& text, int32_t cursorPos)
 	{
 		enableScissor();
 		float advanceX = 0;
 		for (size_t i = 0; i < text.size(); i++)
 		{
 			if (cursorPos == i)
-				drawRectangle(x + static_cast<int32_t>(advanceX), y, 2, size, Drawer::Color(0x00, 0x00, 0x00));
+				drawRectangle(x + static_cast<int32_t>(advanceX), baselineY, 2, -size, Drawer::Color(0x00, 0x00, 0x00));
 
 			m_charShader.use();
 			CharacterOpenGL& c = getChar(text[i]);
 			float charScale = static_cast<float>(size) / c.m_size;
-			drawChar(c, x + static_cast<int32_t>(advanceX), y, size, color);
+			drawChar(c, x + static_cast<int32_t>(advanceX), baselineY, size, color);
 			advanceX += static_cast<float>(c.m_advance) / 64 * charScale;
 		}
 		if (cursorPos >= 0 && cursorPos >= text.size())
-			drawRectangle(x + static_cast<int32_t>(advanceX), y, 2, size, Drawer::Color(0x00, 0x00, 0x00));
+			drawRectangle(x + static_cast<int32_t>(advanceX), baselineY, 2, -size, Drawer::Color(0x00, 0x00, 0x00));
 		disableScissor();
 	}
 
-	void DrawerOpenGL::drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32_t size, Color color, const UnicodeString& text, int32_t cursorPos)
+	void DrawerOpenGL::drawText(int32_t x, int32_t baselineY, int32_t width, int32_t height, int32_t size, Color color, const UnicodeString& text, int32_t cursorPos)
 	{
 		enableScissor();
 		float wordWidth = 0;
@@ -315,7 +315,7 @@ namespace fastui
 		for (size_t i = 0; i < text.size(); i++)
 		{
 			if (cursorPos == i)
-				drawRectangle(x + static_cast<int32_t>(advanceX), y + static_cast<int32_t>(advanceY), 2, size, Drawer::Color(0x00, 0x00, 0x00));
+				drawRectangle(x + static_cast<int32_t>(advanceX), baselineY + static_cast<int32_t>(advanceY), 2, -size, Drawer::Color(0x00, 0x00, 0x00));
 
 			m_charShader.use();
 			if (wordWidth == 0 && text[i] != ' ' && text[i] != '\n')
@@ -359,12 +359,12 @@ namespace fastui
 					advanceY += size;
 				}
 
-				drawChar(c, x + static_cast<int32_t>(advanceX), y + static_cast<int32_t>(advanceY), size, color);
+				drawChar(c, x + static_cast<int32_t>(advanceX), baselineY + static_cast<int32_t>(advanceY), size, color);
 				advanceX += c.m_advance / 64.0f * charScale;
 			}
 		}
 		if (cursorPos >= 0 && cursorPos >= text.size())
-			drawRectangle(x + static_cast<int32_t>(advanceX), y + static_cast<int32_t>(advanceY), 2, size, Drawer::Color(0x00, 0x00, 0x00));
+			drawRectangle(x + static_cast<int32_t>(advanceX), baselineY + static_cast<int32_t>(advanceY), 2, -size, Drawer::Color(0x00, 0x00, 0x00));
 		disableScissor();
 	}
 
@@ -390,23 +390,27 @@ namespace fastui
 		disableScissor();
 	}
 
-	std::pair<int32_t, int32_t> DrawerOpenGL::measureText(int32_t size, const UnicodeString& text)
+	DrawerOpenGL::TextSize DrawerOpenGL::measureText(int32_t size, const UnicodeString& text)
 	{
-		float width = 0, height = 0;
+		TextSize ret;
+		ret.minY = 1e9;
+
 		for (size_t i = 0; i < text.size(); ++i)
 		{
 			CharacterOpenGL& c = getChar(text[i]);
 			float charScale = static_cast<float>(size) / c.m_size;
-			width += (c.m_width + c.m_advance) / 64 * charScale;
-			height = std::max(height, c.m_height * charScale);
+			ret.width += (c.m_width + c.m_advance) / 64 * charScale;
+
+			ret.maxY = std::max(ret.maxY, static_cast<int32_t>(ceil(c.m_bearingY * charScale)));
+			ret.minY = std::min(ret.minY, static_cast<int32_t>(floor((c.m_bearingY - c.m_height) * charScale)));
 		}
 
-		return std::make_pair(static_cast<int32_t>(width), static_cast<int32_t>(height));
+		return ret;
 	}
 
-	std::pair<int32_t, int32_t> DrawerOpenGL::measureText(int32_t width, int32_t size, const UnicodeString& text)
+	DrawerOpenGL::TextSize DrawerOpenGL::measureText(int32_t width, int32_t size, const UnicodeString& text)  //TODO (fix): calc height by maxY - minY
 	{
-		float retWidth = 0;
+		TextSize ret;
 		float wordWidth = 0;
 		float advanceX = 0, advanceY = 0;
 		for (size_t i = 0; i < text.size(); ++i)
@@ -453,10 +457,11 @@ namespace fastui
 				}
 
 				advanceX += c.m_advance / 64.0f * charScale;
-				retWidth = std::max(retWidth, advanceX);
+				ret.width = std::max(ret.width, static_cast<int32_t>(advanceX));
 			}
 		}
-		return std::make_pair(static_cast<int32_t>(retWidth), static_cast<int32_t>(advanceY + size));
+		ret.maxY = static_cast<int32_t>(advanceY + size);
+		return ret;
 	}
 
 	CharacterOpenGL& DrawerOpenGL::getChar(UnicodeString::char_type ch)
@@ -512,7 +517,7 @@ namespace fastui
 		glm::mat4 projection(1.0f);
 		projection = glm::translate(projection, glm::vec3(
 			glx(static_cast<int32_t>(x + m_state.m_translate_x + c.m_bearingX * charScale), static_cast<int32_t>(charScale * c.m_width)),
-			gly(static_cast<int32_t>(y + m_state.m_translate_y - c.m_bearingY * charScale + size), static_cast<int32_t>(charScale * c.m_height)),
+			gly(static_cast<int32_t>(y + m_state.m_translate_y - c.m_bearingY * charScale), static_cast<int32_t>(charScale * c.m_height)),
 			0.0f
 		));
 		projection = glm::scale(projection, glm::vec3(glwidth(static_cast<int32_t>(charScale * c.m_width)), glheight(static_cast<int32_t>(charScale * c.m_height)), 1.0f));
@@ -524,6 +529,10 @@ namespace fastui
 
 		m_charShader.setMatrix4fv("projection", projection);
 		m_charShader.set4fv("color", clr);
+
+		/*m_rectShader.use();
+		m_rectShader.setMatrix4fv("projection", projection);
+		m_rectShader.set4fv("color", clr);*/
 
 		glBindVertexArray(m_rectVAO);
 		glBindTexture(GL_TEXTURE_2D, c.m_texture);
