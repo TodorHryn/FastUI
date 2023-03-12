@@ -16,7 +16,7 @@ Features:
 
 # Usage
 
-See [examples/](/examples/) folder
+See [example/](/example/) folder
 
 ### Creating button
 ```cpp
