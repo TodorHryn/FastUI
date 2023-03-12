@@ -9,14 +9,14 @@ class FontOpenGL
 {
 	public:
 		FontOpenGL();
-		FontOpenGL(const std::wstring &path);
+		FontOpenGL(const std::string &path);
 		FontOpenGL(const FontOpenGL&) = delete;
 		virtual ~FontOpenGL();
 
-		virtual void load(const std::wstring &path);
+		virtual void load(const std::string &path);
 		virtual void load(const std::vector<uint8_t> &data);
 
-		virtual CharacterOpenGL& get(wchar_t ch);
+		virtual CharacterOpenGL& get(UChar32 ch);
 
 		void operator=(const FontOpenGL&) = delete;
 
@@ -24,5 +24,5 @@ class FontOpenGL
 		static FT_Library *m_library;
 		FT_Face m_face;
 		std::vector<uint8_t> m_faceData;
-		std::unordered_map<wchar_t, CharacterOpenGL> m_chars;
+		std::unordered_map<UChar32, CharacterOpenGL> m_chars;
 };

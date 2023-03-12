@@ -4,7 +4,7 @@ CharacterOpenGL::CharacterOpenGL()
 {
 }
 
-CharacterOpenGL::CharacterOpenGL(FT_Face &face, wchar_t c)
+CharacterOpenGL::CharacterOpenGL(FT_Face &face, UChar32 c)
 {
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 

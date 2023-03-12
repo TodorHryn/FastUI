@@ -1,6 +1,7 @@
 #pragma once
 
 #include "View.h"
+#include <unicode/unistr.h>
 
 class Button : public View
 {
@@ -14,7 +15,7 @@ class Button : public View
 		virtual int32_t getMinWidth(int32_t expectedHeight) const override;
 		virtual int32_t getMinHeight(int32_t expectedWidth) const override;
 
-		std::wstring m_text;
+		icu::UnicodeString m_text;
 		int32_t m_textSize;
 		Drawer::Color m_textColor;
 		Drawer::Color m_pressedColor;

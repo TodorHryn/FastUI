@@ -2,6 +2,7 @@
 
 #include "View.h"
 #include "Geometry.h"
+#include <unicode/unistr.h>
 
 class DropdownList : public View
 {
@@ -9,8 +10,8 @@ public:
 	DropdownList(SizePolitics width = SizePolitics::WRAP_CONTENT, SizePolitics height = SizePolitics::MATCH_PARENT);
 	virtual ~DropdownList();
 
-	virtual void setList(const std::vector<std::wstring>& list);
-	virtual std::wstring getSelectedItem() const;
+	virtual void setList(const std::vector<icu::UnicodeString>& list);
+	virtual icu::UnicodeString getSelectedItem() const;
 
 	virtual bool onMouseEventOverlay(const MouseEvent& ev) override;
 	virtual bool onMouseEvent(const MouseEvent& ev) override;
@@ -25,7 +26,7 @@ public:
 	Drawer::Color m_textColor;
 
 protected:
-	std::vector<std::wstring> m_list;
+	std::vector<icu::UnicodeString> m_list;
 	uint32_t m_selectedItem;
 	
 	std::vector<FastUI::Rectangle> m_listBB;

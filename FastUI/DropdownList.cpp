@@ -15,7 +15,7 @@ DropdownList::~DropdownList()
 {
 }
 
-void DropdownList::setList(const std::vector<std::wstring>& list)
+void DropdownList::setList(const std::vector<icu::UnicodeString>& list)
 {
 	m_list = list;
 	m_listBB.resize(list.size());
@@ -23,10 +23,10 @@ void DropdownList::setList(const std::vector<std::wstring>& list)
 	m_selectedItem = 0;
 }
 
-std::wstring DropdownList::getSelectedItem() const
+icu::UnicodeString DropdownList::getSelectedItem() const
 {
 	if (m_selectedItem < 0 || m_selectedItem > m_list.size())
-		return std::wstring();
+		return icu::UnicodeString();
 	return m_list[m_selectedItem];
 }
 
@@ -62,7 +62,7 @@ void DropdownList::draw(int32_t width, int32_t height)
 	Drawer::State state = m_drawer->state();
 	m_drawer->drawRectange(0, 0, width, height, m_backgroundColor);
 
-	if (getSelectedItem().size())
+	if (getSelectedItem().length())
 	{
 		m_drawer->drawText(m_paddingX, height / 2 - m_textSize / 2, m_textSize, m_textColor, getSelectedItem());
 	}

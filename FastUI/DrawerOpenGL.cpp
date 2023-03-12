@@ -198,49 +198,49 @@ void DrawerOpenGL::drawRectange(int32_t x, int32_t y, int32_t width, int32_t hei
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
-void DrawerOpenGL::drawText(int32_t x, int32_t y, int32_t size, Color color, const std::wstring &text, int32_t cursorPos)
+void DrawerOpenGL::drawText(int32_t x, int32_t y, int32_t size, Color color, const icu::UnicodeString &text, int32_t cursorPos)
 {
 	enableScissor();
 	float advanceX = 0;
-	for (size_t i = 0; i < text.size(); ++i)
+	for (size_t i = 0; i < text.length(); ++i)
 	{
 		if (cursorPos == i)
 			drawRectange(x + advanceX, y, 2, size, Drawer::Color(0x00, 0x00, 0x00));
 
 		m_charShader.use();
-		CharacterOpenGL &c = m_font.get(text[i]);
+		CharacterOpenGL &c = m_font.get(text.char32At(i));
 		float charScale = static_cast<float>(size) / c.m_size;
 		drawChar(c, x + advanceX, y, size, color);
 		advanceX += static_cast<float>(c.m_advance) / 64 * charScale;
 	}
-	if (cursorPos >= 0 && cursorPos >= text.size())
+	if (cursorPos >= 0 && cursorPos >= text.length())
 		drawRectange(x + advanceX, y, 2, size, Drawer::Color(0x00, 0x00, 0x00));
 	disableScissor();
 }
 
-void DrawerOpenGL::drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32_t size, Color color, const std::wstring &text, int32_t cursorPos)
+void DrawerOpenGL::drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32_t size, Color color, const icu::UnicodeString &text, int32_t cursorPos)
 {
 	enableScissor();
 	float wordWidth = 0;
 	float advanceX = 0, advanceY = 0;
-	for (size_t i = 0; i < text.size(); ++i)
+	for (size_t i = 0; i < text.length(); ++i)
 	{
 		if (cursorPos == i)
 			drawRectange(x + advanceX, y + advanceY, 2, size, Drawer::Color(0x00, 0x00, 0x00));
 
 		m_charShader.use();
-		if (wordWidth == 0 && text[i] != L' ' && text[i] != L'\n')
+		if (wordWidth == 0 && text.char32At(i) != ' ' && text.char32At(i) != '\n')
 		{
 			size_t j = i;
-			for (; j < text.size() && text[j] != L' ' && text[j] != L'\n'; ++j)
+			for (; j < text.length() && text.char32At(j) != ' ' && text.char32At(j) != '\n'; ++j)
 			{
-				CharacterOpenGL &c = m_font.get(text[j]);
+				CharacterOpenGL &c = m_font.get(text.char32At(j));
 				float charScale = static_cast<float>(size) / c.m_size;
 				wordWidth += c.m_advance / 64.0f * charScale;
 			}
 			if (j > i)
 			{
-				CharacterOpenGL &c = m_font.get(text[j - 1]);
+				CharacterOpenGL &c = m_font.get(text.char32At(j - 1));
 				float charScale = static_cast<float>(size) / c.m_size;
 				wordWidth += c.m_width * charScale;
 			}
@@ -251,18 +251,18 @@ void DrawerOpenGL::drawText(int32_t x, int32_t y, int32_t width, int32_t height,
 				advanceY += size;
 			}
 		}
-		if (text[i] == L' ')
+		if (text.char32At(i) == ' ')
 			wordWidth = 0;
-		if (text[i] == L'\n')
+		if (text.char32At(i) == '\n')
 		{
 			advanceX = 0;
 			advanceY += size;
 			wordWidth = 0;
 		}
 
-		if (text[i] != L'\n')
+		if (text.char32At(i) != '\n')
 		{
-			CharacterOpenGL &c = m_font.get(text[i]);
+			CharacterOpenGL &c = m_font.get(text.char32At(i));
 			float charScale = static_cast<float>(size) / c.m_size;
 			if (advanceX + (c.m_width + c.m_advance / 64) * charScale > width)
 			{
@@ -274,7 +274,7 @@ void DrawerOpenGL::drawText(int32_t x, int32_t y, int32_t width, int32_t height,
 			advanceX += c.m_advance / 64.0f * charScale;
 		}
 	}
-	if (cursorPos >= 0 && cursorPos >= text.size())
+	if (cursorPos >= 0 && cursorPos >= text.length())
 		drawRectange(x + advanceX, y + advanceY, 2, size, Drawer::Color(0x00, 0x00, 0x00));
 	disableScissor();
 }
@@ -301,12 +301,12 @@ void DrawerOpenGL::drawImage(int32_t x, int32_t y, int32_t width, int32_t height
 	disableScissor();
 }
 
-std::pair<int32_t, int32_t> DrawerOpenGL::measureText(int32_t size, const std::wstring &text)
+std::pair<int32_t, int32_t> DrawerOpenGL::measureText(int32_t size, const icu::UnicodeString &text)
 {
 	float width = 0, height = 0;
-	for (wchar_t ch : text)
+	for (size_t i = 0; i < text.length(); ++i)
 	{
-		CharacterOpenGL &c = m_font.get(ch);
+		CharacterOpenGL &c = m_font.get(text.char32At(i));
 		float charScale = static_cast<float>(size) / c.m_size;
 		width += (c.m_width + c.m_advance) / 64 * charScale;
 		height = std::max(height, c.m_height * charScale);
@@ -315,25 +315,25 @@ std::pair<int32_t, int32_t> DrawerOpenGL::measureText(int32_t size, const std::w
 	return std::make_pair(width, height);
 }
 
-std::pair<int32_t, int32_t> DrawerOpenGL::measureText(int32_t width, int32_t size, const std::wstring & text)
+std::pair<int32_t, int32_t> DrawerOpenGL::measureText(int32_t width, int32_t size, const icu::UnicodeString &text)
 {
 	float retWidth = 0;
 	float wordWidth = 0;
 	float advanceX = 0, advanceY = 0;
-	for (size_t i = 0; i < text.size(); ++i)
+	for (size_t i = 0; i < text.length(); ++i)
 	{
-		if (wordWidth == 0 && text[i] != L' ' && text[i] != L'\n')
+		if (wordWidth == 0 && text.char32At(i) != ' ' && text.char32At(i) != '\n')
 		{
 			size_t j = i;
-			for (; j < text.size() && text[j] != L' ' && text[j] != L'\n'; ++j)
+			for (; j < text.length() && text.char32At(j) != ' ' && text.char32At(j) != '\n'; ++j)
 			{
-				CharacterOpenGL &c = m_font.get(text[j]);
+				CharacterOpenGL &c = m_font.get(text.char32At(j));
 				float charScale = static_cast<float>(size) / c.m_size;
 				wordWidth += c.m_advance / 64.0f * charScale;
 			}
 			if (j > i)
 			{
-				CharacterOpenGL &c = m_font.get(text[j - 1]);
+				CharacterOpenGL &c = m_font.get(text.char32At(j - 1));
 				float charScale = static_cast<float>(size) / c.m_size;
 				wordWidth += c.m_width * charScale;
 			}
@@ -344,18 +344,18 @@ std::pair<int32_t, int32_t> DrawerOpenGL::measureText(int32_t width, int32_t siz
 				advanceY += size;
 			}
 		}
-		if (text[i] == L' ')
+		if (text.char32At(i) == ' ')
 			wordWidth = 0;
-		if (text[i] == L'\n')
+		if (text.char32At(i) == '\n')
 		{
 			advanceX = 0;
 			advanceY += size;
 			wordWidth = 0;
 		}
 
-		if (text[i] != L'\n')
+		if (text.char32At(i) != '\n')
 		{
-			CharacterOpenGL &c = m_font.get(text[i]);
+			CharacterOpenGL &c = m_font.get(text.char32At(i));
 			float charScale = static_cast<float>(size) / c.m_size;
 			if (advanceX + (c.m_width + c.m_advance / 64) * charScale > width)
 			{

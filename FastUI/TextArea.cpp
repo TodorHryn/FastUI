@@ -39,7 +39,7 @@ void TextArea::draw(int32_t width, int32_t height)
 	Drawer::State state = m_drawer->state();
 	m_drawer->drawRectange(0, 0, width, height, m_backgroundColor);
 
-	if (m_text.size())
+	if (m_text.length())
 	{
 		auto size = m_drawer->measureText(m_textSize, m_text);
 

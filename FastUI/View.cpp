@@ -35,7 +35,7 @@ void View::onKeyboardEvent(const KeyboardEvent &ev)
 	
 }
 
-void View::onCharInput(wchar_t ch)
+void View::onCharInput(UChar32 ch)
 {
 }
 
