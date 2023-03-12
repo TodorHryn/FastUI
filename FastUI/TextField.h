@@ -12,8 +12,8 @@ namespace fastui
 
 		virtual void setOnCharInput(std::function<bool(UnicodeString::char_type ch)> onCharInput);
 
-		virtual bool onMouseEvent(const MouseEvent& ev) override;
 		virtual void onKeyboardEvent(const KeyboardEvent& ev) override;
+		virtual bool onMouseEvent(const MouseEvent& ev) override;
 		virtual void onCharInput(UnicodeString::char_type ch) override;
 
 		virtual void draw(int32_t width, int32_t height) override;

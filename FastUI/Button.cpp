@@ -6,7 +6,7 @@ namespace fastui
 		: View(width, height)
 		, m_textSize(12)
 		, m_textColor(0x00, 0x00, 0x00)
-		, m_pressedColor(m_backgroundColor)
+		, m_pressedColor(0xE0, 0xE0, 0xE0)
 		, m_pressed(false)
 	{
 	}
@@ -17,7 +17,10 @@ namespace fastui
 
 	bool Button::onMouseEvent(const MouseEvent& ev)
 	{
-		m_pressed = ev.action == MouseEvent::Action::PRESS;
+		if (ev.action == MouseEvent::Action::PRESS && ev.button == MouseEvent::Button::LEFT)
+			m_pressed = true;
+		else if (ev.action == MouseEvent::Action::RELEASE || ev.action == MouseEvent::Action::LEAVE)
+			m_pressed = false;
 		return View::onMouseEvent(ev);
 	}
 
@@ -28,8 +31,8 @@ namespace fastui
 			m_drawer->drawRectange(0, 0, width, height, m_pressedColor);
 		else
 		{
-			m_drawer->drawRectange(0, 0, width, height, m_backgroundColor);
-			m_drawer->drawShadowBorder(0, 0, width, height, Drawer::Color(0xA0, 0xA0, 0xA0), Drawer::Color(0xA0, 0xA0, 0xA0));
+			m_drawer->drawRectange(0, 0, width, height, m_mouseOver ? m_hoverColor : m_backgroundColor);
+			m_drawer->drawShadowBorder(0, 0, width, height, 1, Drawer::Color(0xA0, 0xA0, 0xA0));
 		}
 
 		if (m_text.size())

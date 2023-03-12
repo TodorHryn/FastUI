@@ -21,8 +21,8 @@ namespace fastui
 		UnicodeString m_text;
 		int32_t m_textSize;
 		int32_t m_checkboxSize;
+		int32_t m_checkboxBorderSize;
 		Drawer::Color m_textColor;
-		Drawer::Color m_notCheckedColor;
 		Drawer::Color m_checkedColor;
 
 	protected:

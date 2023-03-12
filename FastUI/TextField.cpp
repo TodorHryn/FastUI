@@ -22,16 +22,6 @@ namespace fastui
 		m_onCharInput = onCharInput;
 	}
 
-	bool TextField::onMouseEvent(const MouseEvent& ev)
-	{
-		if (!m_editable)
-			return false;
-
-		if (ev.action == MouseEvent::Action::PRESS && ev.button == MouseEvent::Button::LEFT)
-			m_drawer->focus(shared_from_this());
-		return View::onMouseEvent(ev);
-	}
-
 	void TextField::onKeyboardEvent(const KeyboardEvent& ev)
 	{
 		if (!m_editable)
@@ -64,6 +54,13 @@ namespace fastui
 		}
 	}
 
+	bool TextField::onMouseEvent(const MouseEvent& ev)
+	{
+		if (ev.action == MouseEvent::Action::PRESS && ev.button == MouseEvent::Button::LEFT)
+			m_drawer->focus(shared_from_this());
+		return View::onMouseEvent(ev);
+	}
+
 	void TextField::onCharInput(UnicodeString::char_type ch)
 	{
 		if (!m_editable)
@@ -86,7 +83,8 @@ namespace fastui
 	{
 		Drawer::State state = m_drawer->state();
 		m_drawer->drawRectange(0, 0, width, height, m_backgroundColor);
-		m_drawer->drawShadowBorder(0, 0, width, height, Drawer::Color(0xA0, 0xA0, 0xA0), Drawer::Color(0xA0, 0xA0, 0xA0));
+		Drawer::Color borderColor = m_mouseOver || (m_drawer->isFocused(shared_from_this()) && m_editable) ? Drawer::Color(0x40, 0x40, 0x40) : Drawer::Color(0xA0, 0xA0, 0xA0);
+		m_drawer->drawShadowBorder(0, 0, width, height, 2, borderColor);
 
 		if (m_text.size())
 		{

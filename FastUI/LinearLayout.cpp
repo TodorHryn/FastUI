@@ -71,6 +71,27 @@ namespace fastui
 		return View::onScroll(x, y, xoffset, yoffset);
 	}
 
+	bool LinearLayout::onMouseMove(int32_t x, int32_t y)
+	{
+		x += m_scrollX;
+		y += m_scrollY;
+
+		for (size_t i = 0; i < m_children.size(); ++i)
+		{
+			const Rectangle& rect = m_childrenBB[i];
+			if (x >= rect.x
+				&& x <= rect.x + rect.width
+				&& y >= rect.y
+				&& y <= rect.y + rect.height)
+			{
+				if (m_children[i]->onMouseMove(x - rect.x, y - rect.y))
+					return true;
+			}
+		}
+
+		return View::onMouseMove(x, y);
+	}
+
 	bool LinearLayout::onMouseEvent(const MouseEvent& ev)
 	{
 		MouseEvent realEv = ev;
@@ -192,6 +213,8 @@ namespace fastui
 			int32_t width = 0;
 			for (size_t i = 0; i < m_children.size(); ++i)
 				width = std::max(width, m_children[i]->getMinWidth(m_childrenBB[i].height));
+			if (m_hasVerticalScrollbar)
+				width += SCROLLBAR_WIDTH + SCROLLBAR_TO_CONTENT_MARGIN;
 			return width + m_paddingX * 2;
 		}
 		else
@@ -199,6 +222,8 @@ namespace fastui
 			int32_t width = static_cast<int32_t>(m_spacing * (m_children.size() - 1));
 			for (size_t i = 0; i < m_children.size(); ++i)
 				width += m_children[i]->getMinWidth(expectedHeight);
+			if (m_hasHorizontalScrollbar)
+				width += SCROLLBAR_WIDTH + SCROLLBAR_TO_CONTENT_MARGIN;
 			return width + m_paddingX * 2;
 		}
 	}
@@ -214,6 +239,8 @@ namespace fastui
 			int32_t height = 0;
 			for (size_t i = 0; i < m_children.size(); ++i)
 				height = std::max(height, m_children[i]->getMinHeight(m_childrenBB[i].width));
+			if (m_hasHorizontalScrollbar)
+				height += SCROLLBAR_WIDTH + SCROLLBAR_TO_CONTENT_MARGIN;
 			return height + m_paddingY * 2;
 		}
 		else
@@ -221,8 +248,46 @@ namespace fastui
 			int32_t height = static_cast<int32_t>(m_spacing * (m_children.size() - 1));
 			for (size_t i = 0; i < m_children.size(); ++i)
 				height += m_children[i]->getMinHeight(expectedWidth);
+			if (m_hasVerticalScrollbar)
+				height += SCROLLBAR_WIDTH + SCROLLBAR_TO_CONTENT_MARGIN;
 			return height + m_paddingY * 2;
 		}
+	}
+
+	std::shared_ptr<View> LinearLayout::getViewAtMousePos(int32_t x, int32_t y)
+	{
+		x += m_scrollX;
+		y += m_scrollY;
+
+		for (size_t i = 0; i < m_children.size(); ++i)
+		{
+			const Rectangle& rect = m_childrenBB[i];
+			if (x >= rect.x
+				&& x <= rect.x + rect.width
+				&& y >= rect.y
+				&& y <= rect.y + rect.height)
+			{
+				return m_children[i]->getViewAtMousePos(x - rect.x, y - rect.y);
+			}
+		}
+
+		return View::getViewAtMousePos(x, y);
+	}
+
+	std::shared_ptr<View> LinearLayout::getViewOverlayAtMousePos(int32_t x, int32_t y)
+	{
+		x += m_scrollX;
+		y += m_scrollY;
+
+		for (size_t i = 0; i < m_children.size(); ++i)
+		{
+			const Rectangle& rect = m_childrenBB[i];
+			std::shared_ptr<View> v = m_children[i]->getViewOverlayAtMousePos(x - rect.x, y - rect.y);
+			if (v)
+				return v;
+		}
+
+		return View::getViewOverlayAtMousePos(x, y);
 	}
 
 	void LinearLayout::updateBB(int32_t width, int32_t height) const

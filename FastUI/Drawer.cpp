@@ -41,6 +41,11 @@ namespace fastui
 		m_root->onScroll(x, y, xoffset, yoffset);
 	}
 
+	void Drawer::onMouseMove(int32_t x, int32_t y)
+	{
+		m_root->onMouseMove(x, y);
+	}
+
 	void Drawer::translate(int32_t x, int32_t y)
 	{
 		m_state.m_translate_x += x;

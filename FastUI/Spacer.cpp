@@ -22,6 +22,7 @@ namespace fastui
 
 	void Spacer::draw(int32_t width, int32_t height)
 	{
+		m_drawer->drawRectange(0, 0, width, height, m_backgroundColor);
 	}
 
 	int32_t Spacer::getMinWidth(int32_t expectedHeight) const

@@ -16,6 +16,7 @@ namespace fastui
 
 		virtual bool onMouseEventOverlay(const MouseEvent& ev) override;
 		virtual bool onMouseEvent(const MouseEvent& ev) override;
+		virtual std::shared_ptr<View> getViewOverlayAtMousePos(int32_t x, int32_t y) override;
 
 		virtual void draw(int32_t width, int32_t height) override;
 		virtual void drawOverlay(int32_t width, int32_t height) override;
@@ -30,11 +31,13 @@ namespace fastui
 	protected:
 		std::vector<UnicodeString> m_list;
 		uint32_t m_selectedItem;
+		uint32_t m_hoveredItem;
 
 		std::vector<Rectangle> m_listBB;
 		Rectangle m_BB;
 
 		bool m_showItems;
+		bool m_hoverOverlay;
 		mutable int32_t m_minWidth;
 	};
 };

@@ -13,7 +13,7 @@ namespace fastui
 		virtual void execute() override;
 		virtual void render() override;
 		virtual void drawRectange(int32_t x, int32_t y, int32_t width, int32_t height, Color color) override;
-		virtual void drawShadowBorder(int32_t x, int32_t y, int32_t width, int32_t height, Color colorTopLeft, Color colorBottomRight) override;
+		virtual void drawShadowBorder(int32_t x, int32_t y, int32_t width, int32_t height, int32_t thickness, Color color) override;
 		virtual void drawText(int32_t x, int32_t y, int32_t size, Color color, const UnicodeString& text, int32_t cursorPos) override;
 		virtual void drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32_t size, Color color, const UnicodeString& text, int32_t cursorPos) override;
 		virtual void drawImage(int32_t x, int32_t y, int32_t width, int32_t height, const Image& img) override;
@@ -37,5 +37,6 @@ namespace fastui
 		unsigned int m_rectVAO, m_rectVBO;
 		ShaderProgram m_rectShader, m_charShader, m_imageShader;
 		std::vector<FontOpenGL> m_fonts;
+		std::pair<std::shared_ptr<View>, bool> m_viewAtMousePos; //view; overlay at mouse pos?
 	};
 };

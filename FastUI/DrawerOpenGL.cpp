@@ -39,7 +39,10 @@ namespace fastui
 				btn = MouseEvent::Button::RIGHT;
 
 			if (action == GLFW_PRESS)
+			{
 				act = MouseEvent::Action::PRESS;
+				drawer->focus(std::shared_ptr<View>());
+			}
 			else if (action == GLFW_RELEASE)
 				act = MouseEvent::Action::RELEASE;
 
@@ -91,6 +94,14 @@ namespace fastui
 		}
 	}
 
+	void cursor_position_callback(GLFWwindow* window, double x, double y)
+	{
+		if (drawer)
+		{
+			drawer->onMouseMove(static_cast<int32_t>(x), static_cast<int32_t>(y));
+		}
+	}
+
 	DrawerOpenGL::DrawerOpenGL(int32_t width, int32_t height)
 		: Drawer(width, height)
 	{
@@ -118,6 +129,7 @@ namespace fastui
 		glfwSetKeyCallback(m_window, key_callback);
 		glfwSetCharCallback(m_window, character_callback);
 		glfwSetScrollCallback(m_window, scroll_callback);
+		glfwSetCursorPosCallback(m_window, cursor_position_callback);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -162,6 +174,37 @@ namespace fastui
 	void DrawerOpenGL::execute()
 	{
 		while (!glfwWindowShouldClose(m_window)) {
+			double x, y;
+			glfwGetCursorPos(m_window, &x, &y);
+			std::shared_ptr<View> newViewAtMousePos = m_root->getViewOverlayAtMousePos(x, y);
+			if (newViewAtMousePos)
+			{
+				if (newViewAtMousePos != m_viewAtMousePos.first || !m_viewAtMousePos.second)
+				{
+					if (m_viewAtMousePos.first)
+					{
+						if (m_viewAtMousePos.second) m_viewAtMousePos.first->onMouseEventOverlay(MouseEvent(MouseEvent::Action::LEAVE));
+						else m_viewAtMousePos.first->onMouseEvent(MouseEvent(MouseEvent::Action::LEAVE));
+					}
+					m_viewAtMousePos = std::make_pair(newViewAtMousePos, true);
+					m_viewAtMousePos.first->onMouseEventOverlay(MouseEvent(MouseEvent::Action::ENTER));
+				}
+			}
+			else
+			{
+				newViewAtMousePos = m_root->getViewAtMousePos(x, y);
+				if (newViewAtMousePos != m_viewAtMousePos.first || m_viewAtMousePos.second)
+				{
+					if (m_viewAtMousePos.first)
+					{
+						if (m_viewAtMousePos.second) m_viewAtMousePos.first->onMouseEventOverlay(MouseEvent(MouseEvent::Action::LEAVE));
+						else m_viewAtMousePos.first->onMouseEvent(MouseEvent(MouseEvent::Action::LEAVE));
+					}
+					m_viewAtMousePos = std::make_pair(newViewAtMousePos, false);
+					m_viewAtMousePos.first->onMouseEvent(MouseEvent(MouseEvent::Action::ENTER));
+				}
+			}
+
 			double prevTime = glfwGetTime();
 			drawer->render();
 			glfwPollEvents();
@@ -206,12 +249,12 @@ namespace fastui
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 	}
 
-	void DrawerOpenGL::drawShadowBorder(int32_t x, int32_t y, int32_t width, int32_t height, Color colorTopLeft, Color colorBottomRight)
+	void DrawerOpenGL::drawShadowBorder(int32_t x, int32_t y, int32_t width, int32_t height, int32_t thickness, Color color)
 	{
-		drawRectange(width, 0, 1, height, colorBottomRight);		//Right
-		drawRectange(0, 0, 1, height, colorTopLeft);				//Left
-		drawRectange(0, 0, width, 1, colorTopLeft);					//Top
-		drawRectange(0, height - 1, width, 1, colorBottomRight);	//Bottom
+		drawRectange(width - thickness, 0, thickness, height, color);		//Right
+		drawRectange(0, 0, thickness, height, color);						//Left
+		drawRectange(0, 0, width, thickness, color);						//Top
+		drawRectange(0, height, width, thickness, color);					//Bottom
 	}
 
 	void DrawerOpenGL::drawText(int32_t x, int32_t y, int32_t size, Color color, const UnicodeString& text, int32_t cursorPos)
@@ -434,12 +477,12 @@ namespace fastui
 
 	float DrawerOpenGL::glx(int32_t x, int32_t width)
 	{
-		return -1.0f + static_cast<float>(x + width / 2) / m_width * 2;
+		return -1.0f + (x + static_cast<float>(width) / 2) / m_width * 2;
 	}
 
 	float DrawerOpenGL::gly(int32_t y, int32_t height)
 	{
-		return 1.0f - static_cast<float>(y + height / 2) / m_height * 2;
+		return 1.0f - (y + static_cast<float>(height) / 2) / m_height * 2;
 	}
 
 	float DrawerOpenGL::glwidth(int32_t width)

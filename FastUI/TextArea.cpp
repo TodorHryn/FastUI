@@ -40,7 +40,8 @@ namespace fastui
 	{
 		Drawer::State state = m_drawer->state();
 		m_drawer->drawRectange(0, 0, width, height, m_backgroundColor);
-		m_drawer->drawShadowBorder(0, 0, width, height, Drawer::Color(0xA0, 0xA0, 0xA0), Drawer::Color(0xA0, 0xA0, 0xA0));
+		Drawer::Color borderColor = m_mouseOver || (m_drawer->isFocused(shared_from_this()) && m_editable) ? Drawer::Color(0x40, 0x40, 0x40) : Drawer::Color(0xA0, 0xA0, 0xA0);
+		m_drawer->drawShadowBorder(0, 0, width, height, 2, borderColor);
 
 		if (m_text.size())
 		{

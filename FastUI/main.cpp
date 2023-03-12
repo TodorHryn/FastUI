@@ -170,7 +170,7 @@ std::shared_ptr<LinearLayout> createCalculator(std::shared_ptr<Drawer> drawer)
 	layout->m_paddingY = 8;
 	layout->setSpacing(8);
 	layout->setOrientation(LinearLayout::Orientation::VERTICAL);
-	layout->m_backgroundColor = Drawer::Color(0xE0, 0xE0, 0xE0);
+	layout->m_backgroundColor = Drawer::Color(0xF0, 0xF0, 0xF0);
 	std::shared_ptr<TextField> number = std::make_shared<TextField>();
 	number->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
 	number->m_textColor = Drawer::Color(0x00, 0x00, 0x00, 0xDE);
@@ -192,31 +192,26 @@ std::shared_ptr<LinearLayout> createCalculator(std::shared_ptr<Drawer> drawer)
 	{
 		std::shared_ptr<LinearLayout> lay = std::make_shared<LinearLayout>();
 		lay->setSpacing(8);
-		lay->m_backgroundColor = Drawer::Color(0xE0, 0xE0, 0xE0);
 		lay->setOrientation(LinearLayout::Orientation::HORIZONTAL);
 
 		for (size_t j = 0; j < calcButtons[i].size(); ++j)
 		{
-			std::shared_ptr<Button> btn = std::make_shared<Button>(View::SizePolitics::MATCH_PARENT);
 			if (calcButtons[i][j] == " ")
-			{
-				btn->m_backgroundColor = Drawer::Color(0xE0, 0xE0, 0xE0);
-				btn->m_pressedColor = Drawer::Color(0xE0, 0xE0, 0xE0);
-			}
+				lay->addChild(std::make_shared<Spacer>());
 			else
 			{
+				std::shared_ptr<Button> btn = std::make_shared<Button>(View::SizePolitics::MATCH_PARENT);
 				btn->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
-				btn->m_pressedColor = Drawer::Color(0xEE, 0xEE, 0xEE);
+				btn->m_textColor = Drawer::Color(0x00, 0x00, 0x00, 0xDE);
+				btn->m_textSize = 48;
+				btn->m_text = calcButtons[i][j];
+				btn->setOnMouseEvent([btn, number](const MouseEvent& ev) {
+					if (ev.action == MouseEvent::Action::PRESS && ev.button == MouseEvent::Button::LEFT)
+						processKey(btn->m_text[0], number);
+					return true;
+					});
+				lay->addChild(btn);
 			}
-			btn->m_textColor = Drawer::Color(0x00, 0x00, 0x00, 0xDE);
-			btn->m_textSize = 48;
-			btn->m_text = calcButtons[i][j];
-			btn->setOnMouseEvent([btn, number] (const MouseEvent &ev) {
-				if (ev.action == MouseEvent::Action::PRESS && ev.button == MouseEvent::Button::LEFT)
-					processKey(btn->m_text[0], number);
-				return true;
-			});
-			lay->addChild(btn);
 		}
 
 		layout->addChild(lay);
@@ -301,7 +296,6 @@ std::shared_ptr<LinearLayout> createChat()
 
 	std::shared_ptr<Button> inputSendAsMe = std::make_shared<Button>();
 	inputSendAsMe->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
-	inputSendAsMe->m_pressedColor = Drawer::Color(0xE0, 0xE0, 0xE0);
 	inputSendAsMe->m_textSize = 48;
 	inputSendAsMe->m_paddingX = 8;
 	inputSendAsMe->m_paddingY = 8;
@@ -315,7 +309,6 @@ std::shared_ptr<LinearLayout> createChat()
 
 	std::shared_ptr<Button> inputSendAsOther = std::make_shared<Button>();
 	inputSendAsOther->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
-	inputSendAsOther->m_pressedColor = Drawer::Color(0xE0, 0xE0, 0xE0);
 	inputSendAsOther->m_textSize = 48;
 	inputSendAsOther->m_paddingX = 8;
 	inputSendAsOther->m_paddingY = 8;
@@ -336,15 +329,22 @@ std::shared_ptr<LinearLayout> createControls()
 	lay->setOrientation(LinearLayout::Orientation::HORIZONTAL);
 	lay->m_backgroundColor = Drawer::Color(0xF0, 0xF0, 0xF0);
 
-	lay->addChild(std::make_shared<Spacer>());
 	std::shared_ptr<LinearLayout> layContent0 = std::make_shared<LinearLayout>(View::SizePolitics::WRAP_CONTENT);
+	layContent0->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
+
+	auto spWhite = std::make_shared<Spacer>();
+	spWhite->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
+	lay->addChild(std::make_shared<Spacer>());
+	lay->addChild(std::make_shared<Spacer>(*spWhite));
 	lay->addChild(layContent0);
+	lay->addChild(std::make_shared<Spacer>(*spWhite));
 	lay->addChild(std::make_shared<Spacer>());
 
-	layContent0->addChild(std::make_shared<Spacer>());
 	std::shared_ptr<LinearLayout> layContent = std::make_shared<LinearLayout>(View::SizePolitics::WRAP_CONTENT, View::SizePolitics::WRAP_CONTENT);
 	layContent->setSpacing(8);
 	layContent->m_paddingY = 8;
+
+	layContent0->addChild(std::make_shared<Spacer>());
 	layContent0->addChild(layContent);
 	layContent0->addChild(std::make_shared<Spacer>());
 
@@ -375,7 +375,6 @@ std::shared_ptr<LinearLayout> createControls()
 
 	std::shared_ptr<Button> btn = std::make_shared<Button>();
 	btn->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
-	btn->m_pressedColor = Drawer::Color(0xE0, 0xE0, 0xE0);
 	btn->m_textSize = 48;
 	btn->m_paddingX = 8;
 	btn->m_paddingY = 8;
@@ -386,6 +385,7 @@ std::shared_ptr<LinearLayout> createControls()
 	chk->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
 	chk->m_textSize = 48;
 	chk->m_checkboxSize = 48;
+	chk->m_checkboxBorderSize = 4;
 	chk->m_paddingX = 8;
 	chk->m_paddingY = 8;
 	chk->m_text = "Checkbox";

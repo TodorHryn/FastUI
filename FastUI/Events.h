@@ -14,10 +14,13 @@ namespace fastui
 		{
 			NONE,
 			PRESS,
-			RELEASE
+			RELEASE,
+			ENTER,
+			LEAVE
 		};
 
 		MouseEvent(Button btn, Action ac, int32_t c_x, int32_t c_y) : button(btn), action(ac), x(c_x), y(c_y) {}
+		MouseEvent(Action ac) : action(ac) {}
 
 		Button button;
 		Action action;

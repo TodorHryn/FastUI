@@ -34,15 +34,11 @@ namespace fastui
 		Drawer(int32_t width, int32_t height);
 		virtual ~Drawer();
 
-		void onCharInput(UnicodeString::char_type ch);
-		void onKeyboardEvent(const KeyboardEvent& ev);
-		void onMouseEvent(const MouseEvent& ev);
-		void onScroll(int32_t x, int32_t y, double xoffset, double yoffset);
 
 		virtual void execute() = 0;
 		virtual void render() = 0;
 		virtual void drawRectange(int32_t x, int32_t y, int32_t width, int32_t height, Color color) = 0;
-		virtual void drawShadowBorder(int32_t x, int32_t y, int32_t width, int32_t height, Color colorTopLeft, Color colorBottomRight) = 0;
+		virtual void drawShadowBorder(int32_t x, int32_t y, int32_t width, int32_t height, int32_t thickness, Color color) = 0;
 		virtual void drawText(int32_t x, int32_t y, int32_t size, Color color, const UnicodeString& text, int32_t cursorPos = -1) = 0;
 		virtual void drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32_t size, Color color, const UnicodeString& text, int32_t cursorPos = -1) = 0;
 		virtual void drawImage(int32_t x, int32_t y, int32_t width, int32_t height, const Image& img) = 0;
@@ -63,6 +59,12 @@ namespace fastui
 		int32_t width() const;
 		int32_t height() const;
 		bool isFocused(std::shared_ptr<View> view);
+
+		void onCharInput(UnicodeString::char_type ch);
+		void onKeyboardEvent(const KeyboardEvent& ev);
+		void onMouseEvent(const MouseEvent& ev);
+		void onScroll(int32_t x, int32_t y, double xoffset, double yoffset);
+		void onMouseMove(int32_t x, int32_t y);
 
 	protected:
 		int32_t m_width, m_height;

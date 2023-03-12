@@ -6,11 +6,12 @@ namespace fastui
 		: View(width, height)
 		, m_textSize(12)
 		, m_textColor(0x00, 0x00, 0x00)
-		, m_checkedColor(0x44, 0x44, 0x44)
-		, m_notCheckedColor(0xDD, 0xDD, 0xDD)
+		, m_checkedColor(0x50, 0x50, 0x50)
 		, m_checked(false)
 		, m_checkboxSize(12)
+		, m_checkboxBorderSize(2)
 	{
+		m_hoverColor = Drawer::Color(0x30, 0x30, 0x30);
 	}
 
 	Checkbox::~Checkbox()
@@ -19,7 +20,7 @@ namespace fastui
 
 	bool Checkbox::onMouseEvent(const MouseEvent& ev)
 	{
-		if (ev.action == MouseEvent::Action::PRESS)
+		if (ev.action == MouseEvent::Action::PRESS && ev.button == MouseEvent::Button::LEFT)
 			m_checked = !m_checked;
 		return View::onMouseEvent(ev);
 	}
@@ -28,8 +29,14 @@ namespace fastui
 	{
 		Drawer::State state = m_drawer->state();
 		m_drawer->drawRectange(0, 0, width, height, m_backgroundColor);
-		m_drawer->drawShadowBorder(0, 0, width, height, Drawer::Color(0xA0, 0xA0, 0xA0), Drawer::Color(0xA0, 0xA0, 0xA0));
-		m_drawer->drawRectange(m_paddingX, (height - m_checkboxSize) / 2, m_checkboxSize, m_checkboxSize, m_checked ? m_checkedColor : m_notCheckedColor);
+		m_drawer->drawRectange(m_paddingX, (height - m_checkboxSize) / 2, m_checkboxSize, m_checkboxSize, m_mouseOver ? m_hoverColor : m_checkedColor);
+		m_drawer->drawRectange(
+			m_paddingX + m_checkboxBorderSize,
+			(height - m_checkboxSize) / 2 + m_checkboxBorderSize,
+			m_checkboxSize - m_checkboxBorderSize * 2,
+			m_checkboxSize - m_checkboxBorderSize * 2,
+			m_checked ? m_checkedColor : m_backgroundColor
+		);
 
 		if (m_text.size())
 		{
