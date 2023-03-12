@@ -11,8 +11,8 @@ Features:
 
 # Gallery
 
-![Calculator](docs/calculator.png)
-![All controls](docs/controls.png)
+![Calculator](calculator.png)
+![All controls](controls.png)
 
 # Usage
 
@@ -22,16 +22,16 @@ See examples/ folder
 ```cpp
 int main()
 {
-    auto button = make_shared<Button>();
-    button->m_text = "Hello, world!";
+	auto button = make_shared<Button>();
+	button->m_text = "Hello, world!";
 	button->setOnMouseEvent([&](const MouseEvent& ev) {
 		button->m_text = "Pressed!";
 		return true;
 	});
 
-    auto layout = make_shared<LinearLayout>();
+	auto layout = make_shared<LinearLayout>();
 	layout->addChild(make_shared<Spacer>());
-    layout->addChild(button);
+	layout->addChild(button);
 	layout->addChild(make_shared<Spacer>());
 
 	auto drawer = std::make_shared<DrawerOpenGL>(1280, 720);
