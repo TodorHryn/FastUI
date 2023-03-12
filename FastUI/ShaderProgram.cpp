@@ -6,6 +6,8 @@
 #include <glm\gtc\matrix_transform.hpp>
 #include <glm\gtc\type_ptr.hpp>
 #include <glm\gtx\string_cast.hpp>
+#include "resource.h"
+#include "Util.h"
 
 #define CHECK_SHADER(shader)																		\
 	do {																							\
@@ -41,18 +43,32 @@ ShaderProgram::ShaderProgram(std::string name) {
 	load(name);
 }
 
+ShaderProgram::ShaderProgram(int resourceId)
+{
+	load(resourceId);
+}
+
 ShaderProgram::~ShaderProgram() {
 	glDeleteProgram(m_shaderProgram);
 }
 
-void ShaderProgram::load(std::string name) {
-	std::ifstream vertexShaderFile(name  + ".vert");
+void ShaderProgram::load(const std::string& name) {
+	std::ifstream vertexShaderFile(name + ".vert");
 	std::string vertexShaderString((std::istreambuf_iterator<char>(vertexShaderFile)), std::istreambuf_iterator<char>());
-	const char *vertexShaderSource = vertexShaderString.c_str();
 
 	std::ifstream fragmentShaderFile(name + ".frag");
 	std::string fragmentShaderString((std::istreambuf_iterator<char>(fragmentShaderFile)), std::istreambuf_iterator<char>());
-	const char *fragmentShaderSource = fragmentShaderString.c_str();
+
+	loadString(vertexShaderString, fragmentShaderString);
+}
+
+void ShaderProgram::load(int resourceId) {
+	loadString(LoadResourceAsString(resourceId), LoadResourceAsString(resourceId + 1));
+}
+
+void ShaderProgram::loadString(const std::string& vertexShaderStr, const std::string& fragmentShaderStr) {
+	const char *vertexShaderSource = vertexShaderStr.c_str();
+	const char *fragmentShaderSource = fragmentShaderStr.c_str();
 
 	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);

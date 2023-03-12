@@ -19,7 +19,7 @@ FontOpenGL::FontOpenGL()
 FontOpenGL::FontOpenGL(const std::wstring &wpath)
 	: FontOpenGL()
 {
-	setFontPath(wpath);
+	load(wpath);
 }
 
 FontOpenGL::~FontOpenGL()
@@ -27,10 +27,18 @@ FontOpenGL::~FontOpenGL()
 	FT_Done_Face(m_face);
 }
 
-void FontOpenGL::setFontPath(const std::wstring &wpath)
+void FontOpenGL::load(const std::wstring &wpath)
 {
 	std::string path(wpath.begin(), wpath.end());
 	if (FT_New_Face(*m_library, path.c_str(), 0, &m_face))
+		throw std::exception("Failed to load font");
+	FT_Set_Pixel_Sizes(m_face, 0, 48);
+}
+
+void FontOpenGL::load(const std::vector<uint8_t>& data)
+{
+	m_faceData = data;
+	if (FT_New_Memory_Face(*m_library, m_faceData.data(), m_faceData.size(), 0, &m_face))
 		throw std::exception("Failed to load font");
 	FT_Set_Pixel_Sizes(m_face, 0, 48);
 }

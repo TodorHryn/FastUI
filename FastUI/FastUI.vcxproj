@@ -41,9 +41,20 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LibraryPath>D:\PROJECTS\FastUI\FastUI\vcpkg_installed\x64-windows-static-md\x64-windows-static-md\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LibraryPath>D:\PROJECTS\FastUI\FastUI\vcpkg_installed\x64-windows-static-md\x64-windows-static-md\debug\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
     <VcpkgEnableManifest>true</VcpkgEnableManifest>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <VcpkgUseStatic>true</VcpkgUseStatic>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <VcpkgUseStatic>true</VcpkgUseStatic>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -56,7 +67,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
+      <EntryPointSymbol>mainCRTStartup </EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -74,8 +87,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
+      <EntryPointSymbol>mainCRTStartup </EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -86,6 +100,8 @@
     <ClCompile Include="DrawerOpenGL.cpp" />
     <ClCompile Include="DropdownList.cpp" />
     <ClCompile Include="FontOpenGL.cpp" />
+    <ClCompile Include="Image.cpp" />
+    <ClCompile Include="ImageOpenGL.cpp" />
     <ClCompile Include="LinearLayout.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
@@ -105,7 +121,10 @@
     <ClInclude Include="Events.h" />
     <ClInclude Include="FontOpenGL.h" />
     <ClInclude Include="Geometry.h" />
+    <ClInclude Include="Image.h" />
+    <ClInclude Include="ImageOpenGL.h" />
     <ClInclude Include="LinearLayout.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Spacer.h" />
     <ClInclude Include="TextArea.h" />
@@ -114,11 +133,34 @@
     <ClInclude Include="View.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="char.frag" />
-    <None Include="char.vert" />
-    <None Include="shader.frag" />
-    <None Include="shader.vert" />
-    <None Include="vcpkg.json" />
+    <None Include="char.frag">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="char.vert">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="image.frag" />
+    <None Include="image.vert" />
+    <None Include="shader.frag">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="shader.vert">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="vcpkg.json">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="OpenSans-Regular.ttf">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="cat.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

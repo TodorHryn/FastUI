@@ -1,4 +1,6 @@
+#include "resource.h"
 #include "DrawerOpenGL.h"
+#include "ImageOpenGL.h"
 #include "View.h"
 #include "Util.h"
 #include <glad\glad.h>
@@ -136,9 +138,12 @@ DrawerOpenGL::DrawerOpenGL(int32_t width, int32_t height)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	m_rectShader.load("shader");
-	m_charShader.load("char");
-	m_font.setFontPath(L"OpenSans-Regular.ttf");
+	m_charShader.load(ID_SHADER_CHAR);
+	m_rectShader.load(ID_SHADER_SHADER);
+	m_imageShader.load(ID_SHADER_IMAGE);
+	std::vector<uint8_t> font;
+	LoadResource(ID_FONT, font);
+	m_font.load(font);
 }
 
 DrawerOpenGL::~DrawerOpenGL()
@@ -274,6 +279,28 @@ void DrawerOpenGL::drawText(int32_t x, int32_t y, int32_t width, int32_t height,
 	disableScissor();
 }
 
+void DrawerOpenGL::drawImage(int32_t x, int32_t y, int32_t width, int32_t height, const Image& i)
+{
+	enableScissor();
+	m_imageShader.use();
+
+	const ImageOpenGL& img = static_cast<const ImageOpenGL&>(i);
+	glm::mat4 projection(1.0f);
+	projection = glm::translate(projection, glm::vec3(
+		glx(x + m_state.m_translate_x, width),
+		gly(y + m_state.m_translate_y, height),
+		0.0f
+	));
+	projection = glm::scale(projection, glm::vec3(glwidth(width), glheight(height), 1.0f));
+	
+	m_imageShader.setMatrix4fv("projection", projection);
+
+	glBindVertexArray(m_rectVAO);
+	glBindTexture(GL_TEXTURE_2D, img.m_texture);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	disableScissor();
+}
+
 std::pair<int32_t, int32_t> DrawerOpenGL::measureText(int32_t size, const std::wstring &text)
 {
 	float width = 0, height = 0;
@@ -376,8 +403,8 @@ void DrawerOpenGL::drawChar(const CharacterOpenGL &c, int32_t x, int32_t y, int3
 	m_charShader.setMatrix4fv("projection", projection);
 	m_charShader.set4fv("color", clr);
 
-	glBindTexture(GL_TEXTURE_2D, c.m_texture);
 	glBindVertexArray(m_rectVAO);
+	glBindTexture(GL_TEXTURE_2D, c.m_texture);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 

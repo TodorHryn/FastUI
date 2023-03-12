@@ -13,6 +13,7 @@ class DrawerOpenGL : public Drawer
 		virtual void drawRectange(int32_t x, int32_t y, int32_t width, int32_t height, Color color) override;
 		virtual void drawText(int32_t x, int32_t y, int32_t size, Color color, const std::wstring &text, int32_t cursorPos) override;
 		virtual void drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32_t size, Color color, const std::wstring &text, int32_t cursorPos) override;
+		virtual void drawImage(int32_t x, int32_t y, int32_t width, int32_t height, const Image& img) override;
 		virtual std::pair<int32_t, int32_t> DrawerOpenGL::measureText(int32_t size, const std::wstring &text) override;
 		virtual std::pair<int32_t, int32_t> DrawerOpenGL::measureText(int32_t width, int32_t size, const std::wstring &text) override;
 
@@ -29,6 +30,6 @@ class DrawerOpenGL : public Drawer
 
 		GLFWwindow *m_window;
 		unsigned int m_rectVAO, m_rectVBO;
-		ShaderProgram m_rectShader, m_charShader;
+		ShaderProgram m_rectShader, m_charShader, m_imageShader;
 		FontOpenGL m_font;
 };

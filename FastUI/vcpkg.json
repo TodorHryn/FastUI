@@ -7,6 +7,6 @@
     "glad",
     "glm",
     "freetype",
-    "libpng"
+    "stb"
   ]
 }

@@ -24,6 +24,9 @@ class Drawer : public std::enable_shared_from_this<Drawer>
 			int32_t m_scissorX = 0, m_scissorY = 0;
 			int32_t m_scissorWidth = 0, m_scissorHeight = 0;
 		};
+		struct Image {
+
+		};
 
 		Drawer(int32_t width, int32_t height);
 		virtual ~Drawer();
@@ -38,6 +41,7 @@ class Drawer : public std::enable_shared_from_this<Drawer>
 		virtual void drawRectange(int32_t x, int32_t y, int32_t width, int32_t height, Color color) = 0;
 		virtual void drawText(int32_t x, int32_t y, int32_t size, Color color, const std::wstring &text, int32_t cursorPos = -1) = 0;
 		virtual void drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32_t size, Color color, const std::wstring &text, int32_t cursorPos = -1) = 0;
+		virtual void drawImage(int32_t x, int32_t y, int32_t width, int32_t height, const Image& img) = 0;
 		virtual std::pair<int32_t, int32_t> measureText(int32_t size, const std::wstring &text) = 0;
 		virtual std::pair<int32_t, int32_t> measureText(int32_t width, int32_t size, const std::wstring &text) = 0;
 

@@ -247,7 +247,7 @@ void LinearLayout::updateBB(int32_t width, int32_t height) const
 
 			if (m_children[i]->getWidthPolitics() == View::SizePolitics::MATCH_PARENT)
 			{
-				m_childrenBB[i].width = firstNonFixedChild ? firstChildWidth : childWidth;
+				m_childrenBB[i].width = std::max<int32_t>(firstNonFixedChild ? firstChildWidth : childWidth, 0);
 				firstNonFixedChild = false;
 			}
 			
@@ -284,7 +284,7 @@ void LinearLayout::updateBB(int32_t width, int32_t height) const
 
 			if (m_children[i]->getHeightPolitics() == View::SizePolitics::MATCH_PARENT)
 			{
-				m_childrenBB[i].height = firstNonFixedChild ? firstChildHeight : childHeight;
+				m_childrenBB[i].height = std::max<int32_t>(firstNonFixedChild ? firstChildHeight : childHeight, 0);
 				firstNonFixedChild = false;
 			}
 			

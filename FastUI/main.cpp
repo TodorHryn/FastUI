@@ -7,6 +7,7 @@
 #include "Spacer.h"
 #include "DropdownList.h"
 #include "Checkbox.h"
+#include "Image.h"
 
 std::shared_ptr<LinearLayout> createLayout(bool horz, int recDepth,	int dir = 0)
 {
@@ -340,6 +341,7 @@ std::shared_ptr<LinearLayout> createControls()
 	layContent0->addChild(std::make_shared<Spacer>());
 	std::shared_ptr<LinearLayout> layContent = std::make_shared<LinearLayout>(View::SizePolitics::WRAP_CONTENT, View::SizePolitics::WRAP_CONTENT);
 	layContent->setSpacing(8);
+	layContent->m_paddingY = 8;
 	layContent0->addChild(layContent);
 	layContent0->addChild(std::make_shared<Spacer>());
 
@@ -385,6 +387,10 @@ std::shared_ptr<LinearLayout> createControls()
 	chk->m_paddingY = 8;
 	chk->m_text = L"Checkbox";
 	layContent->addChild(chk);
+
+	std::shared_ptr<Image> img = std::make_shared<Image>();
+	img->m_image.load("cat.jpg");
+	layContent->addChild(img);
 
 	return lay;
 }

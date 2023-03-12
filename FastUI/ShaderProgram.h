@@ -8,10 +8,13 @@ class ShaderProgram {
 	public:
 		ShaderProgram();
 		explicit ShaderProgram(std::string name);
+		explicit ShaderProgram(int resourceId);
 		ShaderProgram(const ShaderProgram &sh) = delete;
 		virtual ~ShaderProgram();
 
-		void load(std::string name);
+		void load(const std::string& name);
+		void load(int resourseId);;
+		void loadString(const std::string &vertexShader, const std::string &fragmentShader);
 
 		void use();
 		GLuint get();

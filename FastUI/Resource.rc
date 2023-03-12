@@ -1,0 +1,8 @@
+#include "resource.h"
+ID_SHADER_CHAR		TEXTFILE "char.vert"
+ID_SHADER_CHAR_F	TEXTFILE "char.frag"
+ID_SHADER_SHADER	TEXTFILE "shader.vert"
+ID_SHADER_SHADER_F	TEXTFILE "shader.frag"
+ID_SHADER_IMAGE		TEXTFILE "image.vert"
+ID_SHADER_IMAGE_F	TEXTFILE "image.frag"
+ID_FONT				TEXTFILE "OpenSans-Regular.ttf"
