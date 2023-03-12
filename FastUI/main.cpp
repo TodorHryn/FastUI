@@ -18,7 +18,7 @@ std::shared_ptr<LinearLayout> createLayout(bool horz, int recDepth,	int dir = 0)
 
 	std::shared_ptr<Button> btn = std::make_shared<Button>();
 	btn->m_textSize = 24;
-	btn->m_text = L"Жми сюды!";
+	btn->m_text = "Жми сюды!";
 	btn->setOnMouseEvent([btn] (const MouseEvent &ev) {
 		if (ev.action == MouseEvent::Action::PRESS && ev.button == MouseEvent::Button::LEFT)
 		{
@@ -48,31 +48,31 @@ std::shared_ptr<LinearLayout> createLayout(bool horz, int recDepth,	int dir = 0)
 	return layout;
 }
 
-std::vector<std::vector<icu::UnicodeString>> calcButtons = {
+std::vector<std::vector<UnicodeString>> calcButtons = {
 	{ "7", "8", "9", "+", "<="},
 	{ "4", "5", "6", "-", "C"},
 	{ "1", "2", "3", "*", " "},
 	{ ".", "0", "=", "/", " "}
 };
-std::unordered_map<UChar32, int8_t> calcPriorities = {
+std::unordered_map<UnicodeString::char_type, int8_t> calcPriorities = {
 	{'+', 0}, {'-', 0}, {'*', 1}, {'/', 1}
 };
 
 float prevNumber = 0;
-icu::UnicodeString prevOp = L"";
+UnicodeString prevOp = "";
 
-void processKey(UChar32 btn, std::shared_ptr<TextField> number)
+void processKey(UnicodeString::char_type btn, std::shared_ptr<TextField> number)
 {
 	if (btn == L'=')
 	{
-		icu::UnicodeString num;
-		std::vector<icu::UnicodeString> nums;
-		std::vector<UChar32> ops;
+		UnicodeString num;
+		std::vector<UnicodeString> nums;
+		std::vector<UnicodeString::char_type> ops;
 
 		//RPN
-		for (size_t i = 0; i < number->m_text.length(); ++i)
+		for (size_t i = 0; i < number->m_text.size(); ++i)
 		{
-			UChar32 ch = number->m_text.char32At(i);
+			UnicodeString::char_type ch = number->m_text[i];
 			if ((ch >= '0' && ch <= '9') || ch == '.')
 				num += ch;
 			else if (ch == '+' || ch == '-' || ch == '*' || ch == '/')
@@ -85,7 +85,7 @@ void processKey(UChar32 btn, std::shared_ptr<TextField> number)
 				{
 					while (ops.size() && calcPriorities[ch] <= calcPriorities[ops.back()])
 					{
-						icu::UnicodeString str;
+						UnicodeString str;
 						str += ops.back();
 						nums.push_back(str);
 						ops.pop_back();
@@ -94,11 +94,11 @@ void processKey(UChar32 btn, std::shared_ptr<TextField> number)
 				}
 			}
 		}
-		if (num.length())
+		if (num.size())
 			nums.push_back(num);
 		while (ops.size())
 		{
-			icu::UnicodeString str;
+			UnicodeString str;
 			str += ops.back();
 			nums.push_back(str);
 			ops.pop_back();
@@ -106,24 +106,24 @@ void processKey(UChar32 btn, std::shared_ptr<TextField> number)
 
 		//Calc	
 		std::vector<float> floats;
-		for (const icu::UnicodeString &str : nums)
+		for (const UnicodeString &str : nums)
 		{
 			if (str == "+")
 			{
 				floats[floats.size() - 2] += floats.back();
 				floats.pop_back();
 			}
-			else if (str == L"-")
+			else if (str == "-")
 			{
 				floats[floats.size() - 2] -= floats.back();
 				floats.pop_back();
 			}
-			else if (str == L"*")
+			else if (str == "*")
 			{
 				floats[floats.size() - 2] *= floats.back();
 				floats.pop_back();
 			}
-			else if (str == L"/")
+			else if (str == "/")
 			{
 				floats[floats.size() - 2] /= floats.back();
 				floats.pop_back();
@@ -131,9 +131,7 @@ void processKey(UChar32 btn, std::shared_ptr<TextField> number)
 			else
 			{
 				try {
-					std::string strUtf8;
-					str.toUTF8String(strUtf8);
-					floats.push_back(std::stof(strUtf8));
+					floats.push_back(std::stof(str.toUtf8()));
 				}
 				catch (...)
 				{
@@ -141,23 +139,23 @@ void processKey(UChar32 btn, std::shared_ptr<TextField> number)
 			}
 		}
 
-		number->m_text = icu::UnicodeString(std::to_string(floats.back()).c_str());
-		if (number->m_text.indexOf('.') != -1) {
-			while (number->m_text.char32At(number->m_text.length() - 1) == '0')
-				number->m_text.remove(number->m_text.length() - 1);
-			if (number->m_text.char32At(number->m_text.length() - 1) == '.')
-				number->m_text.remove(number->m_text.length() - 1);
+		number->m_text = UnicodeString(std::to_string(floats.back()).c_str());
+		if (number->m_text.find('.') != -1) {
+			while (number->m_text[number->m_text.size() - 1] == '0')
+				number->m_text.pop_back();
+			if (number->m_text[number->m_text.size() - 1] == '.')
+				number->m_text.pop_back();
 		}
 	}
 	else
 	{
 		if (btn == '<')
 		{
-			if (number->m_text.length())
-				number->m_text.remove(number->m_text.length() - 1);
+			if (number->m_text.size())
+				number->m_text.pop_back();
 		}
 		else if (btn == 'C')
-			number->m_text = L"";
+			number->m_text = "";
 		else if (btn != ' ')
 			number->m_text += btn;
 	}
@@ -178,7 +176,7 @@ std::shared_ptr<LinearLayout> createCalculator(std::shared_ptr<Drawer> drawer)
 	number->m_paddingX = 8;
 	number->m_paddingY = 8;
 	number->m_cursorPos = -1;
-	number->setOnCharInput([number](UChar32 ch) {
+	number->setOnCharInput([number](UnicodeString::char_type ch) {
 		for (size_t i = 0; i < calcButtons.size(); ++i)
 			for (size_t j = 0; j < calcButtons[i].size(); ++j)
 				if (calcButtons[i][j][0] == ch)
@@ -198,7 +196,7 @@ std::shared_ptr<LinearLayout> createCalculator(std::shared_ptr<Drawer> drawer)
 		for (size_t j = 0; j < calcButtons[i].size(); ++j)
 		{
 			std::shared_ptr<Button> btn = std::make_shared<Button>(View::SizePolitics::MATCH_PARENT);
-			if (calcButtons[i][j] == L" ")
+			if (calcButtons[i][j] == " ")
 			{
 				btn->m_backgroundColor = Drawer::Color(0xE0, 0xE0, 0xE0);
 				btn->m_pressedColor = Drawer::Color(0xE0, 0xE0, 0xE0);
@@ -270,7 +268,7 @@ void pushMessage(std::shared_ptr<LinearLayout> msgLay, std::shared_ptr<TextArea>
 	curMsgLay->addChild(msg);
 
 	inputText->m_cursorPos = 0;
-	inputText->m_text = L"";
+	inputText->m_text = "";
 }
 
 std::shared_ptr<LinearLayout> createChat()
@@ -362,16 +360,16 @@ std::shared_ptr<LinearLayout> createControls()
 	textArea->m_paddingX = 8;
 	textArea->m_paddingY = 8;
 	textArea->m_text = "Text\nArea";
-	layContent->addChild(textArea);
+	//layContent->addChild(textArea);
 
 	std::shared_ptr<DropdownList> dropdownList = std::make_shared<DropdownList>();
 	dropdownList->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
 	dropdownList->m_textSize = 48;
 	dropdownList->m_paddingX = 8;
 	dropdownList->m_paddingY = 8;
-	std::vector<icu::UnicodeString> list = { "Dropdown list", "List item 1", "This is item number 2" };
+	std::vector<UnicodeString> list = { "Dropdown list", "List item 1", "This is item number 2" };
 	dropdownList->setList(list);
-	layContent->addChild(dropdownList);
+	//layContent->addChild(dropdownList);
 
 	std::shared_ptr<Button> btn = std::make_shared<Button>();
 	btn->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
@@ -380,7 +378,7 @@ std::shared_ptr<LinearLayout> createControls()
 	btn->m_paddingX = 8;
 	btn->m_paddingY = 8;
 	btn->m_text = "Button";
-	layContent->addChild(btn);
+	//layContent->addChild(btn);
 
 	std::shared_ptr<Checkbox> chk = std::make_shared<Checkbox>();
 	chk->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
@@ -389,7 +387,7 @@ std::shared_ptr<LinearLayout> createControls()
 	chk->m_paddingX = 8;
 	chk->m_paddingY = 8;
 	chk->m_text = "Checkbox";
-	layContent->addChild(chk);
+	//layContent->addChild(chk);
 
 	std::shared_ptr<Image> img = std::make_shared<Image>();
 	img->m_image.load("cat.jpg");

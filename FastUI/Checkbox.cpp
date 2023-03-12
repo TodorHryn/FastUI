@@ -28,7 +28,7 @@ void Checkbox::draw(int32_t width, int32_t height)
 	m_drawer->drawRectange(0, 0, width, height, m_backgroundColor);
 	m_drawer->drawRectange(m_paddingX, (height - m_checkboxSize) / 2, m_checkboxSize, m_checkboxSize, m_checked ? m_checkedColor : m_notCheckedColor);
 
-	if (m_text.length())
+	if (m_text.size())
 	{
 		auto size = m_drawer->measureText(m_textSize, m_text);
 		m_drawer->drawText(m_paddingX * 2 + m_checkboxSize, height / 2 - m_textSize / 2, m_textSize, m_textColor, m_text);

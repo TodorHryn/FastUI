@@ -15,7 +15,7 @@ TextField::~TextField()
 {
 }
 
-void TextField::setOnCharInput(std::function<bool(UChar32 ch)> onCharInput)
+void TextField::setOnCharInput(std::function<bool(UnicodeString::char_type ch)> onCharInput)
 {
 	m_onCharInput = onCharInput;
 }
@@ -39,10 +39,10 @@ void TextField::onKeyboardEvent(const KeyboardEvent &ev)
 	{
 		if (ev.button == KeyboardEvent::Button::BACKSPACE)
 		{
-			if (m_cursorPos > 0 && m_cursorPos <= m_text.length())
-				m_text.remove(m_cursorPos - 1, 1);
+			if (m_cursorPos > 0 && m_cursorPos <= m_text.size())
+				m_text.erase(m_cursorPos - 1);
 			else if (m_cursorPos < 0)
-				m_text.remove(m_text.length() - 1, 1);
+				m_text.pop_back();
 			if (m_cursorPos > 0)
 				m_cursorPos--;
 			m_lastCursorMoveTime = m_drawer->getTimeMs();
@@ -55,21 +55,21 @@ void TextField::onKeyboardEvent(const KeyboardEvent &ev)
 		}
 		else if (ev.button == KeyboardEvent::Button::RIGHT)
 		{
-			if (m_cursorPos < m_text.length())
+			if (m_cursorPos < m_text.size())
 				m_cursorPos++;
 			m_lastCursorMoveTime = m_drawer->getTimeMs();
 		}
 	}
 }
 
-void TextField::onCharInput(UChar32 ch)
+void TextField::onCharInput(UnicodeString::char_type ch)
 {
 	if (!m_editable)
 		return;
 
 	if (!m_onCharInput || m_onCharInput(ch))
 	{
-		if (m_cursorPos >= 0 && m_cursorPos < m_text.length())
+		if (m_cursorPos >= 0 && m_cursorPos < m_text.size())
 			m_text.insert(m_cursorPos, ch);
 		else
 			m_text += ch;
@@ -85,7 +85,7 @@ void TextField::draw(int32_t width, int32_t height)
 	Drawer::State state = m_drawer->state();
 	m_drawer->drawRectange(0, 0, width, height, m_backgroundColor);
 
-	if (m_text.length())
+	if (m_text.size())
 	{
 		if (m_drawer->isFocused(shared_from_this()) && (m_drawer->getTimeMs() - m_lastCursorMoveTime < 1000 || (m_drawer->getTimeMs() % 1600) > 800))
 			m_drawer->drawText(

@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <functional>
 #include <memory>
-#include <unicode/unistr.h>
+#include "UnicodeString.h"
 #include "Drawer.h"
 #include "Events.h"
 
@@ -24,7 +24,7 @@ class View : public std::enable_shared_from_this<View>
 		virtual bool onMouseEventOverlay(const MouseEvent& ev);
 		virtual bool onMouseEvent(const MouseEvent &ev);
 		virtual void onKeyboardEvent(const KeyboardEvent &ev);
-		virtual void onCharInput(UChar32 ch);
+		virtual void onCharInput(UnicodeString::char_type ch);
 
 		virtual void draw(int32_t width, int32_t height) = 0;
 		virtual void drawOverlay(int32_t width, int32_t height);

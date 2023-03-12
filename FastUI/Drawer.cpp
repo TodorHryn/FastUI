@@ -16,7 +16,7 @@ Drawer::~Drawer()
 {
 }
 
-void Drawer::onCharInput(UChar32 ch)
+void Drawer::onCharInput(UnicodeString::char_type ch)
 {
 	if (m_focusedView)
 		m_focusedView->onCharInput(ch);

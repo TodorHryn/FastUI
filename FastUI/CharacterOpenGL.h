@@ -3,12 +3,11 @@
 #include <freetype\freetype.h>
 #include <string>
 #include <glad\glad.h>
-#include <unicode/unistr.h>
 
 struct CharacterOpenGL
 {
 	CharacterOpenGL();
-	CharacterOpenGL(FT_Face &face, UChar32 c);
+	CharacterOpenGL(FT_Face &face, FT_Int32 c);
 
 	int32_t m_size = 48;
 	GLuint m_texture;

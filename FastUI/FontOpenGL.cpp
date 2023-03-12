@@ -42,7 +42,7 @@ void FontOpenGL::load(const std::vector<uint8_t>& data)
 	FT_Set_Pixel_Sizes(m_face, 0, 48);
 }
 
-CharacterOpenGL& FontOpenGL::get(UChar32 ch)
+CharacterOpenGL& FontOpenGL::get(UnicodeString::char_type ch)
 {
 	if (m_chars.count(ch) == 0)
 		m_chars.insert(std::make_pair(ch, CharacterOpenGL(m_face, ch)));

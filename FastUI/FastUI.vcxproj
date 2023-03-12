@@ -110,6 +110,7 @@
     <ClCompile Include="Spacer.cpp" />
     <ClCompile Include="TextArea.cpp" />
     <ClCompile Include="TextField.cpp" />
+    <ClCompile Include="UnicodeString.cpp" />
     <ClCompile Include="Util.cpp" />
     <ClCompile Include="View.cpp" />
   </ItemGroup>
@@ -131,6 +132,7 @@
     <ClInclude Include="Spacer.h" />
     <ClInclude Include="TextArea.h" />
     <ClInclude Include="TextField.h" />
+    <ClInclude Include="UnicodeString.h" />
     <ClInclude Include="Util.h" />
     <ClInclude Include="View.h" />
   </ItemGroup>

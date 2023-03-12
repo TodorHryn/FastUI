@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include "CharacterOpenGL.h"
+#include "UnicodeString.h"
 
 class FontOpenGL
 {
@@ -16,7 +17,7 @@ class FontOpenGL
 		virtual void load(const std::string &path);
 		virtual void load(const std::vector<uint8_t> &data);
 
-		virtual CharacterOpenGL& get(UChar32 ch);
+		virtual CharacterOpenGL& get(UnicodeString::char_type ch);
 
 		void operator=(const FontOpenGL&) = delete;
 
@@ -24,5 +25,5 @@ class FontOpenGL
 		static FT_Library *m_library;
 		FT_Face m_face;
 		std::vector<uint8_t> m_faceData;
-		std::unordered_map<UChar32, CharacterOpenGL> m_chars;
+		std::unordered_map<UnicodeString::char_type, CharacterOpenGL> m_chars;
 };

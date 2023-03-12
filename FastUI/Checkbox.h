@@ -1,7 +1,7 @@
 #pragma once
 
 #include "View.h"
-#include <unicode/unistr.h>
+#include "UnicodeString.h"
 
 class Checkbox : public View
 {
@@ -15,7 +15,7 @@ public:
 	virtual int32_t getMinWidth(int32_t expectedHeight) const override;
 	virtual int32_t getMinHeight(int32_t expectedWidth) const override;
 
-	icu::UnicodeString m_text;
+	UnicodeString m_text;
 	int32_t m_textSize;
 	int32_t m_checkboxSize;
 	Drawer::Color m_textColor;
