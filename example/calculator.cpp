@@ -131,9 +131,7 @@ std::shared_ptr<LinearLayout> createCalculator(std::shared_ptr<Drawer> drawer)
 	layout->m_paddingY = 8;
 	layout->setSpacing(8);
 	layout->setOrientation(LinearLayout::Orientation::VERTICAL);
-	layout->m_backgroundColor = Drawer::Color(0xF0, 0xF0, 0xF0);
 	std::shared_ptr<TextField> number = std::make_shared<TextField>();
-	number->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
 	number->m_textColor = Drawer::Color(0x00, 0x00, 0x00, 0xDE);
 	number->m_textSize = 56;
 	number->m_paddingX = 8;
@@ -162,7 +160,6 @@ std::shared_ptr<LinearLayout> createCalculator(std::shared_ptr<Drawer> drawer)
 			else
 			{
 				std::shared_ptr<Button> btn = std::make_shared<Button>(View::SizePolitics::MATCH_PARENT);
-				btn->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
 				btn->m_textColor = Drawer::Color(0x00, 0x00, 0x00, 0xDE);
 				btn->m_textSize = 24;
 				btn->m_text = calcButtons[i][j];
