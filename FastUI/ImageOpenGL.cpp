@@ -4,55 +4,75 @@
 #define STB_IMAGE_IMPLEMENTATION   
 #include <stb_image.h>
 
-ImageOpenGL::ImageOpenGL()
-	: m_width(0)
-	, m_height(0)
+namespace fastui
 {
+	ImageOpenGL::ImageOpenGL()
+		: m_width(0)
+		, m_height(0)
+		, m_texture(-1)
+	{
 
-}
+	}
 
-ImageOpenGL::~ImageOpenGL() {
-	
-}
+	ImageOpenGL::ImageOpenGL(ImageOpenGL&& o) noexcept
+	{
+		*this = o;
+		o.valid = false;
+	}
 
-void ImageOpenGL::load(int resourceId) {
-	std::vector<uint8_t> data;
-	LoadResource(resourceId, data);
+	ImageOpenGL& ImageOpenGL::operator=(ImageOpenGL&& o) noexcept
+	{
+		*this = o;
+		o.valid = false;
+		return *this;
+	}
 
-	int width, height, channels;
-	uint8_t* img = stbi_load_from_memory(data.data(), data.size(), &width, &height, &channels, 3);
-	m_width = width;
-	m_height = height;
-	load(img);
-}
+	ImageOpenGL::~ImageOpenGL() {
+		if (valid)
+			glDeleteTextures(1, &m_texture);
+	}
 
-void ImageOpenGL::load(const std::string& path) {
-	int width, height, channels;
-	uint8_t* img = stbi_load(path.c_str(), &width, &height, &channels, 3);
-	m_width = width;
-	m_height = height;
-	load(img);
-}
+	void ImageOpenGL::load(int resourceId) {
+		std::vector<uint8_t> data;
+		LoadResource(resourceId, data);
 
-void ImageOpenGL::load(uint8_t* glData) {
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		int width, height, channels;
+		uint8_t* img = stbi_load_from_memory(data.data(), static_cast<int>(data.size()), &width, &height, &channels, 3);
+		m_width = width;
+		m_height = height;
+		valid = true;
+		load(img);
+	}
 
-	glGenTextures(1, &m_texture);
-	glBindTexture(GL_TEXTURE_2D, m_texture);
-	glTexImage2D(
-		GL_TEXTURE_2D,
-		0,
-		GL_RGB,
-		m_width,
-		m_height,
-		0,
-		GL_RGB,
-		GL_UNSIGNED_BYTE,
-		glData
-	);
+	void ImageOpenGL::load(const std::string& path) {
+		int width, height, channels;
+		uint8_t* img = stbi_load(path.c_str(), &width, &height, &channels, 3);
+		m_width = width;
+		m_height = height;
+		valid = true;
+		load(img);
+	}
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-}
+	void ImageOpenGL::load(uint8_t* glData) {
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+		glGenTextures(1, &m_texture);
+		glBindTexture(GL_TEXTURE_2D, m_texture);
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,
+			GL_RGB,
+			m_width,
+			m_height,
+			0,
+			GL_RGB,
+			GL_UNSIGNED_BYTE,
+			glData
+		);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
+};

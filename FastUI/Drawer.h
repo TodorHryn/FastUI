@@ -9,10 +9,12 @@
 #include "Events.h"
 #include "UnicodeString.h"
 
-class View;
-
-class Drawer : public std::enable_shared_from_this<Drawer>
+namespace fastui
 {
+	class View;
+
+	class Drawer : public std::enable_shared_from_this<Drawer>
+	{
 	public:
 		struct Color {
 			uint8_t R, G, B, A;
@@ -33,18 +35,19 @@ class Drawer : public std::enable_shared_from_this<Drawer>
 		virtual ~Drawer();
 
 		void onCharInput(UnicodeString::char_type ch);
-		void onKeyboardEvent(const KeyboardEvent &ev);
-		void onMouseEvent(const MouseEvent &ev);
+		void onKeyboardEvent(const KeyboardEvent& ev);
+		void onMouseEvent(const MouseEvent& ev);
 		void onScroll(int32_t x, int32_t y, double xoffset, double yoffset);
 
 		virtual void execute() = 0;
 		virtual void render() = 0;
 		virtual void drawRectange(int32_t x, int32_t y, int32_t width, int32_t height, Color color) = 0;
-		virtual void drawText(int32_t x, int32_t y, int32_t size, Color color, const UnicodeString &text, int32_t cursorPos = -1) = 0;
-		virtual void drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32_t size, Color color, const UnicodeString &text, int32_t cursorPos = -1) = 0;
+		virtual void drawShadowBorder(int32_t x, int32_t y, int32_t width, int32_t height, Color colorTopLeft, Color colorBottomRight) = 0;
+		virtual void drawText(int32_t x, int32_t y, int32_t size, Color color, const UnicodeString& text, int32_t cursorPos = -1) = 0;
+		virtual void drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32_t size, Color color, const UnicodeString& text, int32_t cursorPos = -1) = 0;
 		virtual void drawImage(int32_t x, int32_t y, int32_t width, int32_t height, const Image& img) = 0;
-		virtual std::pair<int32_t, int32_t> measureText(int32_t size, const UnicodeString &text) = 0;
-		virtual std::pair<int32_t, int32_t> measureText(int32_t width, int32_t size, const UnicodeString &text) = 0;
+		virtual std::pair<int32_t, int32_t> measureText(int32_t size, const UnicodeString& text) = 0;
+		virtual std::pair<int32_t, int32_t> measureText(int32_t width, int32_t size, const UnicodeString& text) = 0;
 
 		virtual int32_t getTimeMs() const = 0;
 
@@ -52,7 +55,7 @@ class Drawer : public std::enable_shared_from_this<Drawer>
 		void translateTo(int32_t x, int32_t y);
 		void focus(std::shared_ptr<View> view);
 		void setRoot(std::shared_ptr<View> view);
-		void setState(const State &state);
+		void setState(const State& state);
 		void setSize(int32_t width, int32_t height);
 		void setScissor(int32_t x, int32_t y, int32_t width, int32_t height);
 
@@ -66,4 +69,5 @@ class Drawer : public std::enable_shared_from_this<Drawer>
 		State m_state;
 		std::shared_ptr<View> m_focusedView;
 		std::shared_ptr<View> m_root;
+	};
 };

@@ -36,85 +36,101 @@
 	}																								\
 	while(0)	
 
-ShaderProgram::ShaderProgram() {
-}
-
-ShaderProgram::ShaderProgram(std::string name) {
-	load(name);
-}
-
-ShaderProgram::ShaderProgram(int resourceId)
+namespace fastui
 {
-	load(resourceId);
-}
+	ShaderProgram::ShaderProgram() {
+	}
 
-ShaderProgram::~ShaderProgram() {
-	glDeleteProgram(m_shaderProgram);
-}
+	ShaderProgram::ShaderProgram(std::string name) : valid(true) {
+		load(name);
+	}
 
-void ShaderProgram::load(const std::string& name) {
-	std::ifstream vertexShaderFile(name + ".vert");
-	std::string vertexShaderString((std::istreambuf_iterator<char>(vertexShaderFile)), std::istreambuf_iterator<char>());
+	ShaderProgram::ShaderProgram(int resourceId) : valid(true) {
+		load(resourceId);
+	}
 
-	std::ifstream fragmentShaderFile(name + ".frag");
-	std::string fragmentShaderString((std::istreambuf_iterator<char>(fragmentShaderFile)), std::istreambuf_iterator<char>());
+	ShaderProgram::ShaderProgram(ShaderProgram&& o)
+	{
+		*this = o;
+		o.valid = false;
+	}
 
-	loadString(vertexShaderString, fragmentShaderString);
-}
+	ShaderProgram& ShaderProgram::operator=(ShaderProgram&& o)
+	{
+		*this = o;
+		o.valid = false;
+		return *this;
+	}
 
-void ShaderProgram::load(int resourceId) {
-	loadString(LoadResourceAsString(resourceId), LoadResourceAsString(resourceId + 1));
-}
+	ShaderProgram::~ShaderProgram() {
+		if (valid)
+			glDeleteProgram(m_shaderProgram);
+	}
 
-void ShaderProgram::loadString(const std::string& vertexShaderStr, const std::string& fragmentShaderStr) {
-	const char *vertexShaderSource = vertexShaderStr.c_str();
-	const char *fragmentShaderSource = fragmentShaderStr.c_str();
+	void ShaderProgram::load(const std::string& name) {
+		std::ifstream vertexShaderFile(name + ".vert");
+		std::string vertexShaderString((std::istreambuf_iterator<char>(vertexShaderFile)), std::istreambuf_iterator<char>());
 
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-	CHECK_SHADER(vertexShader);
+		std::ifstream fragmentShaderFile(name + ".frag");
+		std::string fragmentShaderString((std::istreambuf_iterator<char>(fragmentShaderFile)), std::istreambuf_iterator<char>());
 
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
-	CHECK_SHADER(fragmentShader);
+		loadString(vertexShaderString, fragmentShaderString);
+	}
 
-	m_shaderProgram = glCreateProgram();
-	glAttachShader(m_shaderProgram, vertexShader);
-	glAttachShader(m_shaderProgram, fragmentShader);
-	glLinkProgram(m_shaderProgram);
-	CHECK_PROGRAM(m_shaderProgram);
+	void ShaderProgram::load(int resourceId) {
+		loadString(LoadResourceAsString(resourceId), LoadResourceAsString(resourceId + 1));
+	}
 
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-}
+	void ShaderProgram::loadString(const std::string& vertexShaderStr, const std::string& fragmentShaderStr) {
+		const char* vertexShaderSource = vertexShaderStr.c_str();
+		const char* fragmentShaderSource = fragmentShaderStr.c_str();
 
-void ShaderProgram::use() {
-	glUseProgram(m_shaderProgram);
-}
+		GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+		glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+		glCompileShader(vertexShader);
+		CHECK_SHADER(vertexShader);
 
-GLuint ShaderProgram::get() {
-	return m_shaderProgram;
-}
+		GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+		glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+		glCompileShader(fragmentShader);
+		CHECK_SHADER(fragmentShader);
 
-void ShaderProgram::set1f(std::string name, float value) {
-	glUniform1f(glGetUniformLocation(m_shaderProgram, name.c_str()), value);
-}
+		m_shaderProgram = glCreateProgram();
+		glAttachShader(m_shaderProgram, vertexShader);
+		glAttachShader(m_shaderProgram, fragmentShader);
+		glLinkProgram(m_shaderProgram);
+		CHECK_PROGRAM(m_shaderProgram);
 
-void ShaderProgram::set3fv(std::string name, const glm::vec3 &vector) {
-	glUniform3fv(glGetUniformLocation(m_shaderProgram, name.c_str()), 1, glm::value_ptr(vector));
-}
+		glDeleteShader(vertexShader);
+		glDeleteShader(fragmentShader);
+	}
 
-void ShaderProgram::set4fv(std::string name, const glm::vec4 &vector)
-{
-	glUniform4fv(glGetUniformLocation(m_shaderProgram, name.c_str()), 1, glm::value_ptr(vector));
-}
+	void ShaderProgram::use() {
+		glUseProgram(m_shaderProgram);
+	}
 
-void ShaderProgram::setMatrix4fv(std::string name, const glm::mat4 &matrix) {
-	glUniformMatrix4fv(glGetUniformLocation(m_shaderProgram, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
-}
+	GLuint ShaderProgram::get() {
+		return m_shaderProgram;
+	}
 
-void ShaderProgram::setMatrix4fv(std::string name, float * matrix) {
-	glUniformMatrix4fv(glGetUniformLocation(m_shaderProgram, name.c_str()), 1, GL_FALSE, matrix);
-}
+	void ShaderProgram::set1f(std::string name, float value) {
+		glUniform1f(glGetUniformLocation(m_shaderProgram, name.c_str()), value);
+	}
+
+	void ShaderProgram::set3fv(std::string name, const glm::vec3& vector) {
+		glUniform3fv(glGetUniformLocation(m_shaderProgram, name.c_str()), 1, glm::value_ptr(vector));
+	}
+
+	void ShaderProgram::set4fv(std::string name, const glm::vec4& vector)
+	{
+		glUniform4fv(glGetUniformLocation(m_shaderProgram, name.c_str()), 1, glm::value_ptr(vector));
+	}
+
+	void ShaderProgram::setMatrix4fv(std::string name, const glm::mat4& matrix) {
+		glUniformMatrix4fv(glGetUniformLocation(m_shaderProgram, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
+	}
+
+	void ShaderProgram::setMatrix4fv(std::string name, float* matrix) {
+		glUniformMatrix4fv(glGetUniformLocation(m_shaderProgram, name.c_str()), 1, GL_FALSE, matrix);
+	}
+};

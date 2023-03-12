@@ -1,33 +1,36 @@
 #include "Spacer.h"
 
-Spacer::Spacer()
-	: View(SizePolitics::MATCH_PARENT, SizePolitics::MATCH_PARENT)
-	, m_minWidth(0)
-	, m_minHeight(0)
+namespace fastui
 {
-}
+	Spacer::Spacer()
+		: View(SizePolitics::MATCH_PARENT, SizePolitics::MATCH_PARENT)
+		, m_minWidth(0)
+		, m_minHeight(0)
+	{
+	}
 
-Spacer::Spacer(int32_t minWidth, int32_t minHeight)
-	: View(SizePolitics::WRAP_CONTENT, SizePolitics::WRAP_CONTENT)
-	, m_minWidth(minWidth)
-	, m_minHeight(minHeight)
-{
-}
+	Spacer::Spacer(int32_t minWidth, int32_t minHeight)
+		: View(SizePolitics::WRAP_CONTENT, SizePolitics::WRAP_CONTENT)
+		, m_minWidth(minWidth)
+		, m_minHeight(minHeight)
+	{
+	}
 
-Spacer::~Spacer()
-{
-}
+	Spacer::~Spacer()
+	{
+	}
 
-void Spacer::draw(int32_t width, int32_t height)
-{
-}
+	void Spacer::draw(int32_t width, int32_t height)
+	{
+	}
 
-int32_t Spacer::getMinWidth(int32_t expectedHeight) const
-{
-	return m_minWidth;
-}
+	int32_t Spacer::getMinWidth(int32_t expectedHeight) const
+	{
+		return m_minWidth;
+	}
 
-int32_t Spacer::getMinHeight(int32_t expectedWidth) const
-{
-	return m_minHeight;
-}
+	int32_t Spacer::getMinHeight(int32_t expectedWidth) const
+	{
+		return m_minHeight;
+	}
+};

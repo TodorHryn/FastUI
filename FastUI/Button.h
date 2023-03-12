@@ -3,15 +3,18 @@
 #include "View.h"
 #include "UnicodeString.h"
 
-class Button : public View
+namespace fastui
 {
+	class Button : public View
+	{
 	public:
 		Button(SizePolitics width = SizePolitics::WRAP_CONTENT, SizePolitics height = SizePolitics::MATCH_PARENT);
 		virtual ~Button();
 
-		virtual bool onMouseEvent(const MouseEvent &ev) override;
+		virtual bool onMouseEvent(const MouseEvent& ev) override;
 
 		virtual void draw(int32_t width, int32_t height) override;
+
 		virtual int32_t getMinWidth(int32_t expectedHeight) const override;
 		virtual int32_t getMinHeight(int32_t expectedWidth) const override;
 
@@ -22,4 +25,5 @@ class Button : public View
 
 	protected:
 		bool m_pressed;
+	};
 };

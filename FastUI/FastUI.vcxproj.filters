@@ -167,6 +167,9 @@
     <None Include="image.vert">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="NotoEmoji-Regular.ttf">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">

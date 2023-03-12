@@ -7,4 +7,5 @@
 #define ID_SHADER_IMAGE		104
 #define ID_SHADER_IMAGE_F	105
 #define ID_FONT				150
+#define ID_FONT_2			151
 #define ID_IMAGE_CAT		200

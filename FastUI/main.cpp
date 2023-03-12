@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include "DrawerOpenGL.h"
 #include "Button.h"
 #include "LinearLayout.h"
@@ -8,6 +8,8 @@
 #include "DropdownList.h"
 #include "Checkbox.h"
 #include "Image.h"
+
+using namespace fastui;
 
 std::shared_ptr<LinearLayout> createLayout(bool horz, int recDepth,	int dir = 0)
 {
@@ -171,7 +173,7 @@ std::shared_ptr<LinearLayout> createCalculator(std::shared_ptr<Drawer> drawer)
 	layout->m_backgroundColor = Drawer::Color(0xE0, 0xE0, 0xE0);
 	std::shared_ptr<TextField> number = std::make_shared<TextField>();
 	number->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
-	number->m_textColor = Drawer::Color(0x00, 0x00, 0x00, 0xFF * 0.87);
+	number->m_textColor = Drawer::Color(0x00, 0x00, 0x00, 0xDE);
 	number->m_textSize = 56;
 	number->m_paddingX = 8;
 	number->m_paddingY = 8;
@@ -206,7 +208,7 @@ std::shared_ptr<LinearLayout> createCalculator(std::shared_ptr<Drawer> drawer)
 				btn->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
 				btn->m_pressedColor = Drawer::Color(0xEE, 0xEE, 0xEE);
 			}
-			btn->m_textColor = Drawer::Color(0x00, 0x00, 0x00, 0xFF * 0.87);
+			btn->m_textColor = Drawer::Color(0x00, 0x00, 0x00, 0xDE);
 			btn->m_textSize = 48;
 			btn->m_text = calcButtons[i][j];
 			btn->setOnMouseEvent([btn, number] (const MouseEvent &ev) {
@@ -236,7 +238,7 @@ void pushMessage(std::shared_ptr<LinearLayout> msgLay, std::shared_ptr<TextArea>
 	curMsgHorzLay->addChild(curMsgLay);
 	if (!asMe) curMsgHorzLay->addChild(spacer);
 	 
-	if (prevFrom == -1 || prevFrom != asMe)
+	if (prevFrom == -1 || static_cast<bool>(prevFrom) != asMe)
 	{
 		std::shared_ptr<LinearLayout> usernameLay = std::make_shared<LinearLayout>(View::SizePolitics::WRAP_CONTENT, View::SizePolitics::WRAP_CONTENT);
 		usernameLay->setOrientation(LinearLayout::Orientation::HORIZONTAL);
@@ -332,7 +334,7 @@ std::shared_ptr<LinearLayout> createControls()
 {
 	std::shared_ptr<LinearLayout> lay = std::make_shared<LinearLayout>();
 	lay->setOrientation(LinearLayout::Orientation::HORIZONTAL);
-	lay->m_backgroundColor = Drawer::Color(0xE0, 0xE0, 0xE0);
+	lay->m_backgroundColor = Drawer::Color(0xF0, 0xF0, 0xF0);
 
 	lay->addChild(std::make_shared<Spacer>());
 	std::shared_ptr<LinearLayout> layContent0 = std::make_shared<LinearLayout>(View::SizePolitics::WRAP_CONTENT);
@@ -351,7 +353,7 @@ std::shared_ptr<LinearLayout> createControls()
 	textField->m_textSize = 48;
 	textField->m_paddingX = 8;
 	textField->m_paddingY = 8;
-	textField->m_text = "TextField";
+	textField->m_text = "TextField 📝";
 	layContent->addChild(textField);
 
 	std::shared_ptr<TextArea> textArea = std::make_shared<TextArea>();
@@ -359,17 +361,17 @@ std::shared_ptr<LinearLayout> createControls()
 	textArea->m_textSize = 48;
 	textArea->m_paddingX = 8;
 	textArea->m_paddingY = 8;
-	textArea->m_text = "Text\nArea";
-	//layContent->addChild(textArea);
+	textArea->m_text = "Text\nArea\n📜✏";
+	layContent->addChild(textArea);
 
 	std::shared_ptr<DropdownList> dropdownList = std::make_shared<DropdownList>();
 	dropdownList->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
 	dropdownList->m_textSize = 48;
 	dropdownList->m_paddingX = 8;
 	dropdownList->m_paddingY = 8;
-	std::vector<UnicodeString> list = { "Dropdown list", "List item 1", "This is item number 2" };
+	std::vector<UnicodeString> list = { "Dropdown list ⏲", "List item 🟢", "This is item number 2" };
 	dropdownList->setList(list);
-	//layContent->addChild(dropdownList);
+	layContent->addChild(dropdownList);
 
 	std::shared_ptr<Button> btn = std::make_shared<Button>();
 	btn->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
@@ -378,7 +380,7 @@ std::shared_ptr<LinearLayout> createControls()
 	btn->m_paddingX = 8;
 	btn->m_paddingY = 8;
 	btn->m_text = "Button";
-	//layContent->addChild(btn);
+	layContent->addChild(btn);
 
 	std::shared_ptr<Checkbox> chk = std::make_shared<Checkbox>();
 	chk->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
@@ -387,7 +389,7 @@ std::shared_ptr<LinearLayout> createControls()
 	chk->m_paddingX = 8;
 	chk->m_paddingY = 8;
 	chk->m_text = "Checkbox";
-	//layContent->addChild(chk);
+	layContent->addChild(chk);
 
 	std::shared_ptr<Image> img = std::make_shared<Image>();
 	img->m_image.load("cat.jpg");

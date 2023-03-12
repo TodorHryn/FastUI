@@ -8,3 +8,4 @@ void SleepInUs(uint32_t us);
 
 void LoadResource(int name, std::vector<uint8_t>& data);
 std::string LoadResourceAsString(int name);
+
