@@ -1,2 +1,0 @@
-# FastUI
-C++ GUI library
