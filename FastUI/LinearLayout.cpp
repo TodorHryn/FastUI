@@ -15,6 +15,7 @@ LinearLayout::LinearLayout(SizePolitics width, SizePolitics height)
 	, m_scrollbarBackgroundColor(0x00, 0x00, 0x00, 0x40)
 	, m_scrollbarColor(0x00, 0x00, 0x00, 0x80)
 {
+	
 }
 
 LinearLayout::~LinearLayout()

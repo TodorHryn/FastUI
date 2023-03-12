@@ -4,7 +4,7 @@
 class TextField : public View
 {
 public:
-	TextField(SizePolitics width = SizePolitics::MATCH_PARENT, SizePolitics height = SizePolitics::MATCH_PARENT);
+	TextField(SizePolitics width = SizePolitics::MATCH_PARENT, SizePolitics height = SizePolitics::WRAP_CONTENT);
 	virtual ~TextField();
 
 	virtual void setOnCharInput(std::function<bool(wchar_t ch)> onCharInput);

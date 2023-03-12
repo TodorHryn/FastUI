@@ -6,6 +6,7 @@
 #include "TextArea.h"
 #include "Spacer.h"
 #include "DropdownList.h"
+#include "Checkbox.h"
 
 std::shared_ptr<LinearLayout> createLayout(bool horz, int recDepth,	int dir = 0)
 {
@@ -137,8 +138,12 @@ void processKey(wchar_t btn, std::shared_ptr<TextField> number)
 		}
 
 		number->m_text = std::to_wstring(floats.back());
-		while (number->m_text.back() == L'0' || number->m_text.back() == L'.')
-			number->m_text.pop_back();
+		if (number->m_text.find(L'.') != std::wstring::npos) {
+			while (number->m_text.back() == L'0')
+				number->m_text.pop_back();
+			if (number->m_text.back() == L'.')
+				number->m_text.pop_back();
+		}
 	}
 	else
 	{
@@ -157,13 +162,17 @@ void processKey(wchar_t btn, std::shared_ptr<TextField> number)
 std::shared_ptr<LinearLayout> createCalculator(std::shared_ptr<Drawer> drawer)
 {
 	std::shared_ptr<LinearLayout> layout = std::make_shared<LinearLayout>();
+	layout->m_paddingX = 8;
+	layout->m_paddingY = 8;
 	layout->setSpacing(8);
 	layout->setOrientation(LinearLayout::Orientation::VERTICAL);
 	layout->m_backgroundColor = Drawer::Color(0xE0, 0xE0, 0xE0);
 	std::shared_ptr<TextField> number = std::make_shared<TextField>();
 	number->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
 	number->m_textColor = Drawer::Color(0x00, 0x00, 0x00, 0xFF * 0.87);
-	number->m_textSize = 36;
+	number->m_textSize = 56;
+	number->m_paddingX = 8;
+	number->m_paddingY = 8;
 	number->m_cursorPos = -1;
 	number->setOnCharInput([number](wchar_t ch) {
 		for (size_t i = 0; i < calcButtons.size(); ++i)
@@ -184,7 +193,7 @@ std::shared_ptr<LinearLayout> createCalculator(std::shared_ptr<Drawer> drawer)
 
 		for (size_t j = 0; j < calcButtons[i].size(); ++j)
 		{
-			std::shared_ptr<Button> btn = std::make_shared<Button>();
+			std::shared_ptr<Button> btn = std::make_shared<Button>(View::SizePolitics::MATCH_PARENT);
 			if (calcButtons[i][j] == L" ")
 			{
 				btn->m_backgroundColor = Drawer::Color(0xE0, 0xE0, 0xE0);
@@ -237,7 +246,6 @@ void pushMessage(std::shared_ptr<LinearLayout> msgLay, std::shared_ptr<TextArea>
 		}
 		std::shared_ptr<TextField> username = std::make_shared<TextField>(View::SizePolitics::WRAP_CONTENT, View::SizePolitics::WRAP_CONTENT);
 		username->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
-		username->m_textColor = Drawer::Color(0x00, 0x00, 0x00);
 		username->m_textSize = 24;
 		username->m_paddingX = 8;
 		username->m_paddingY = 8;
@@ -282,7 +290,6 @@ std::shared_ptr<LinearLayout> createChat()
 
 	std::shared_ptr<TextArea> inputText = std::make_shared<TextArea>();
 	inputText->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
-	inputText->m_textColor = Drawer::Color(0x00, 0x00, 0x00);
 	inputText->m_textSize = 48;
 	inputText->m_paddingX = 8;
 	inputText->m_paddingY = 8;
@@ -291,7 +298,6 @@ std::shared_ptr<LinearLayout> createChat()
 	std::shared_ptr<Button> inputSendAsMe = std::make_shared<Button>();
 	inputSendAsMe->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
 	inputSendAsMe->m_pressedColor = Drawer::Color(0xE0, 0xE0, 0xE0);
-	inputSendAsMe->m_textColor = Drawer::Color(0x00, 0x00, 0x00);
 	inputSendAsMe->m_textSize = 48;
 	inputSendAsMe->m_paddingX = 8;
 	inputSendAsMe->m_paddingY = 8;
@@ -306,7 +312,6 @@ std::shared_ptr<LinearLayout> createChat()
 	std::shared_ptr<Button> inputSendAsOther = std::make_shared<Button>();
 	inputSendAsOther->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
 	inputSendAsOther->m_pressedColor = Drawer::Color(0xE0, 0xE0, 0xE0);
-	inputSendAsOther->m_textColor = Drawer::Color(0x00, 0x00, 0x00);
 	inputSendAsOther->m_textSize = 48;
 	inputSendAsOther->m_paddingX = 8;
 	inputSendAsOther->m_paddingY = 8;
@@ -340,7 +345,6 @@ std::shared_ptr<LinearLayout> createControls()
 
 	std::shared_ptr<TextField> textField = std::make_shared<TextField>();
 	textField->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
-	textField->m_textColor = Drawer::Color(0x00, 0x00, 0x00);
 	textField->m_textSize = 48;
 	textField->m_paddingX = 8;
 	textField->m_paddingY = 8;
@@ -349,7 +353,6 @@ std::shared_ptr<LinearLayout> createControls()
 
 	std::shared_ptr<TextArea> textArea = std::make_shared<TextArea>();
 	textArea->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
-	textArea->m_textColor = Drawer::Color(0x00, 0x00, 0x00);
 	textArea->m_textSize = 48;
 	textArea->m_paddingX = 8;
 	textArea->m_paddingY = 8;
@@ -358,7 +361,6 @@ std::shared_ptr<LinearLayout> createControls()
 
 	std::shared_ptr<DropdownList> dropdownList = std::make_shared<DropdownList>();
 	dropdownList->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
-	dropdownList->m_textColor = Drawer::Color(0x00, 0x00, 0x00);
 	dropdownList->m_textSize = 48;
 	dropdownList->m_paddingX = 8;
 	dropdownList->m_paddingY = 8;
@@ -369,12 +371,20 @@ std::shared_ptr<LinearLayout> createControls()
 	std::shared_ptr<Button> btn = std::make_shared<Button>();
 	btn->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
 	btn->m_pressedColor = Drawer::Color(0xE0, 0xE0, 0xE0);
-	btn->m_textColor = Drawer::Color(0x00, 0x00, 0x00);
 	btn->m_textSize = 48;
 	btn->m_paddingX = 8;
 	btn->m_paddingY = 8;
 	btn->m_text = L"Button";
 	layContent->addChild(btn);
+
+	std::shared_ptr<Checkbox> chk = std::make_shared<Checkbox>();
+	chk->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
+	chk->m_textSize = 48;
+	chk->m_checkboxSize = 48;
+	chk->m_paddingX = 8;
+	chk->m_paddingY = 8;
+	chk->m_text = L"Checkbox";
+	layContent->addChild(chk);
 
 	return lay;
 }

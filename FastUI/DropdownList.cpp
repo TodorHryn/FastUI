@@ -4,7 +4,7 @@
 DropdownList::DropdownList(SizePolitics width, SizePolitics height)
 	: View(width, height)
 	, m_textSize(12)
-	, m_textColor(Drawer::Color(0xFF, 0xFF, 0xFF))
+	, m_textColor(0x00, 0x00, 0x00)
 	, m_selectedItem(0)
 	, m_minWidth(-1)
 	, m_showItems(false)

@@ -42,17 +42,21 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\libraries\glm;C:\libraries\glfw.bin.WIN64\include;C:\libraries\glad\include\;C:\libraries\glad\src;C:\libraries\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\libraries\glfw.bin.WIN64\lib-vc2015;C:\libraries\freetype\objs\x64\Release Static</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;glfw3dll.lib;opengl32.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -62,19 +66,22 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\libraries\glm;C:\libraries\glfw.bin.WIN64\include;C:\libraries\glad\include\;C:\libraries\glad\src;C:\libraries\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\libraries\glfw.bin.WIN64\lib-vc2015;C:\libraries\freetype\objs\x64\Release Static</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;glfw3dll.lib;opengl32.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="CharacterOpenGL.cpp" />
+    <ClCompile Include="Checkbox.cpp" />
     <ClCompile Include="Drawer.cpp" />
     <ClCompile Include="DrawerOpenGL.cpp" />
     <ClCompile Include="DropdownList.cpp" />
@@ -91,6 +98,7 @@
   <ItemGroup>
     <ClInclude Include="Button.h" />
     <ClInclude Include="CharacterOpenGL.h" />
+    <ClInclude Include="Checkbox.h" />
     <ClInclude Include="Drawer.h" />
     <ClInclude Include="DrawerOpenGL.h" />
     <ClInclude Include="DropdownList.h" />
@@ -110,6 +118,7 @@
     <None Include="char.vert" />
     <None Include="shader.frag" />
     <None Include="shader.vert" />
+    <None Include="vcpkg.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

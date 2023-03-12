@@ -5,7 +5,7 @@ View::View(SizePolitics width, SizePolitics height)
 	, m_height(height)
 	, m_paddingX(0)
 	, m_paddingY(0)
-	, m_backgroundColor(0x00, 0x00, 0x00, 0x00)
+	, m_backgroundColor(0xFF, 0xFF, 0xFF, 0x00)
 {
 }
 

@@ -3,7 +3,7 @@
 Button::Button(SizePolitics width, SizePolitics height) 
 	: View(width, height)
 	, m_textSize(12)
-	, m_textColor(Drawer::Color(0xFF, 0xFF, 0xFF))
+	, m_textColor(0x00, 0x00, 0x00)
 	, m_pressedColor(m_backgroundColor)
 	, m_pressed(false)
 {

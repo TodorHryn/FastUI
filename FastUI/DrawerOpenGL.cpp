@@ -2,7 +2,6 @@
 #include "View.h"
 #include "Util.h"
 #include <glad\glad.h>
-#include <glad.c>
 #include <GLFW\glfw3.h>
 #include <glm\glm.hpp>
 #include <glm\gtc\matrix_transform.hpp>
@@ -283,7 +282,7 @@ std::pair<int32_t, int32_t> DrawerOpenGL::measureText(int32_t size, const std::w
 		CharacterOpenGL &c = m_font.get(ch);
 		float charScale = static_cast<float>(size) / c.m_size;
 		width += (c.m_width + c.m_advance) / 64 * charScale;
-		height = max(height, c.m_height * charScale);
+		height = std::max(height, c.m_height * charScale);
 	}
 
 	return std::make_pair(width, height);
@@ -338,7 +337,7 @@ std::pair<int32_t, int32_t> DrawerOpenGL::measureText(int32_t width, int32_t siz
 			}
 
 			advanceX += c.m_advance / 64.0f * charScale;
-			retWidth = max(retWidth, advanceX);
+			retWidth = std::max(retWidth, advanceX);
 		}
 	}
 	return std::make_pair(retWidth, advanceY + size);
