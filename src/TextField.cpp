@@ -88,10 +88,12 @@ namespace fastui
 
 		if (m_text.size())
 		{
+			auto size = m_drawer->measureText(m_textSize, m_text);
+
 			if (m_drawer->isFocused(shared_from_this()) && (m_drawer->getTimeMs() - m_lastCursorMoveTime < 1000 || (m_drawer->getTimeMs() % 1600) > 800))
 				m_drawer->drawText(
 					m_paddingX,
-					m_paddingY + m_textSize,
+					height / 2 + size.height() / 2,
 					m_textSize,
 					m_textColor,
 					m_text,
@@ -100,7 +102,7 @@ namespace fastui
 			else
 				m_drawer->drawText(
 					m_paddingX,
-					m_paddingY + m_textSize,
+					height / 2 + size.height() / 2,
 					m_textSize,
 					m_textColor,
 					m_text

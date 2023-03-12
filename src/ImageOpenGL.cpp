@@ -32,25 +32,16 @@ namespace fastui
 			glDeleteTextures(1, &m_texture);
 	}
 
-	void ImageOpenGL::load(int resourceId) {
-		std::vector<uint8_t> data;
-		LoadResource(resourceId, data);
-
-		int width, height, channels;
-		uint8_t* img = stbi_load_from_memory(data.data(), static_cast<int>(data.size()), &width, &height, &channels, 3);
-		m_width = width;
-		m_height = height;
-		valid = true;
-		load(img);
-	}
-
 	void ImageOpenGL::load(const std::string& path) {
 		int width, height, channels;
 		uint8_t* img = stbi_load(path.c_str(), &width, &height, &channels, 3);
-		m_width = width;
-		m_height = height;
-		valid = true;
-		load(img);
+		if (img)
+		{
+			m_width = width;
+			m_height = height;
+			valid = true;
+			load(img);
+		}
 	}
 
 	void ImageOpenGL::load(uint8_t* glData) {

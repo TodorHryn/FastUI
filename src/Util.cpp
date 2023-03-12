@@ -1,5 +1,4 @@
 #include "Util.h"
-#include "resource.h"
 #include <vector>
 
 /*
@@ -98,29 +97,3 @@ uint64_t NowInUs() {
 }
 #endif // _WIN32
 
-
-
-
-
-
-/*
-	https://stackoverflow.com/questions/25255899/reading-an-embedded-text-file-resource-visual-studio-c
-*/
-
-
-void LoadResource(int name, std::vector<uint8_t>& data)
-{
-	HMODULE handle = ::GetModuleHandleW(NULL);
-	HRSRC rc = ::FindResourceW(handle, MAKEINTRESOURCEW(name), MAKEINTRESOURCEW(TEXTFILE));
-	HGLOBAL rcData = ::LoadResource(handle, rc);
-	data.resize(::SizeofResource(handle, rc));
-	LPVOID res = ::LockResource(rcData);
-	memcpy(data.data(), res, data.size());
-}
-
-std::string LoadResourceAsString(int name)
-{
-	std::vector<uint8_t> data;
-	LoadResource(name, data);
-	return std::string(data.begin(), data.end());
-}

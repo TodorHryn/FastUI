@@ -1,4 +1,3 @@
-#include "resource.h"
 #include "DrawerOpenGL.h"
 #include "ImageOpenGL.h"
 #include "View.h"
@@ -113,7 +112,7 @@ namespace fastui
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-		m_window = glfwCreateWindow(width, height, "Hello, world!", NULL, NULL);
+		m_window = glfwCreateWindow(width, height, "FastUI Project", NULL, NULL);
 		if (m_window == nullptr) {
 			glfwTerminate();
 			throw std::exception("Failed to create window");
@@ -170,22 +169,24 @@ namespace fastui
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
 
-		m_charShader.load(ID_SHADER_CHAR);
-		m_rectShader.load(ID_SHADER_SHADER);
-		m_imageShader.load(ID_SHADER_IMAGE);
+		m_charShader.load("char");
+		m_rectShader.load("shader");
+		m_imageShader.load("image");
 
-		std::vector<uint8_t> font;
-		for (size_t i = 0; i < 3; ++i)
-		{
-			LoadResource(ID_FONT_1 + i, font);
-			m_fonts.emplace_back();
-			m_fonts[i].load(font);
-		}
+		m_fonts.resize(3);
+		m_fonts[0].load("OpenSans-Regular.ttf");
+		m_fonts[1].load("NotoEmoji-Regular.ttf");
+		m_fonts[2].load("NotoSansSymbols2-Regular.ttf");
 	}
 
 	DrawerOpenGL::~DrawerOpenGL()
 	{
 		glfwTerminate();
+	}
+
+	void DrawerOpenGL::setTitle(const UnicodeString& title) 
+	{
+		glfwSetWindowTitle(m_window, title.toUtf8().c_str());
 	}
 
 	void DrawerOpenGL::execute()
@@ -529,10 +530,6 @@ namespace fastui
 
 		m_charShader.setMatrix4fv("projection", projection);
 		m_charShader.set4fv("color", clr);
-
-		/*m_rectShader.use();
-		m_rectShader.setMatrix4fv("projection", projection);
-		m_rectShader.set4fv("color", clr);*/
 
 		glBindVertexArray(m_rectVAO);
 		glBindTexture(GL_TEXTURE_2D, c.m_texture);

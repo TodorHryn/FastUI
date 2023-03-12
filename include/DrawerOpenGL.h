@@ -2,8 +2,10 @@
 #include "Drawer.h"
 #include "FontOpenGL.h"
 
+class GLFWwindow;
+
 namespace fastui
-{
+{	
 	class DrawerOpenGL : public Drawer
 	{
 	public:
@@ -12,6 +14,7 @@ namespace fastui
 
 		virtual void execute() override;
 		virtual void render() override;
+		virtual void setTitle(const UnicodeString& title) override;
 		virtual void drawRectangle(int32_t x, int32_t y, int32_t width, int32_t height, Color color) override;
 		virtual void drawRoundedRectangle(int32_t x, int32_t y, int32_t width, int32_t height, Color color) override;
 		virtual void drawShadowBorder(int32_t x, int32_t y, int32_t width, int32_t height, int32_t thickness, Color color) override;

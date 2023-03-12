@@ -13,7 +13,6 @@ namespace fastui
 		ImageOpenGL& operator=(ImageOpenGL&&) noexcept;
 		virtual ~ImageOpenGL();
 
-		void load(int resourceId);
 		void load(const std::string& path);
 
 		int32_t m_width, m_height;

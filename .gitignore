@@ -397,4 +397,5 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-FastUI/vcpkg_installed
+build-shared
+build-static
