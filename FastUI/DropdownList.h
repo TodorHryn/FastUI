@@ -29,6 +29,8 @@ namespace fastui
 		Drawer::Color m_textColor;
 
 	protected:
+		size_t screenposToId(size_t id);
+
 		std::vector<UnicodeString> m_list;
 		uint32_t m_selectedItem;
 		uint32_t m_hoveredItem;

@@ -34,10 +34,10 @@ namespace fastui
 		Drawer(int32_t width, int32_t height);
 		virtual ~Drawer();
 
-
 		virtual void execute() = 0;
 		virtual void render() = 0;
-		virtual void drawRectange(int32_t x, int32_t y, int32_t width, int32_t height, Color color) = 0;
+		virtual void drawRectangle(int32_t x, int32_t y, int32_t width, int32_t height, Color color) = 0;
+		virtual void drawRoundedRectangle(int32_t x, int32_t y, int32_t width, int32_t height, Color color) = 0;
 		virtual void drawShadowBorder(int32_t x, int32_t y, int32_t width, int32_t height, int32_t thickness, Color color) = 0;
 		virtual void drawText(int32_t x, int32_t y, int32_t size, Color color, const UnicodeString& text, int32_t cursorPos = -1) = 0;
 		virtual void drawText(int32_t x, int32_t y, int32_t width, int32_t height, int32_t size, Color color, const UnicodeString& text, int32_t cursorPos = -1) = 0;

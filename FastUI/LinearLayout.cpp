@@ -159,7 +159,7 @@ namespace fastui
 
 		//------- Draw children -------
 		Drawer::State state = m_drawer->state();
-		m_drawer->drawRectange(0, 0, width, height, m_backgroundColor);
+		m_drawer->drawRectangle(0, 0, width, height, m_backgroundColor);
 		for (size_t i = 0; i < m_children.size(); ++i)
 		{
 			m_drawer->translateTo(state.m_translate_x + m_childrenBB[i].x - m_scrollX, state.m_translate_y + m_childrenBB[i].y - m_scrollY);
@@ -175,14 +175,14 @@ namespace fastui
 		{
 			float scrollbarY = static_cast<float>(m_scrollY) / (m_maxScrollY + height) * height;
 			float scrollbarHeight = static_cast<float>(height) / (m_maxScrollY + height) * height;
-			m_drawer->drawRectange(width - SCROLLBAR_WIDTH, static_cast<int32_t>(scrollbarY), SCROLLBAR_WIDTH, static_cast<int32_t>(scrollbarHeight), m_scrollbarColor);
+			m_drawer->drawRectangle(width - SCROLLBAR_WIDTH, static_cast<int32_t>(scrollbarY), SCROLLBAR_WIDTH, static_cast<int32_t>(scrollbarHeight), m_scrollbarColor);
 			m_hasVerticalScrollbar = true;
 		}
 		if (m_maxScrollX > 0)
 		{
 			float scrollbarX = static_cast<float>(m_scrollX) / (m_maxScrollX + width) * width;
 			float scrollbarWidth = static_cast<float>(width) / (m_maxScrollX + width) * width;
-			m_drawer->drawRectange(static_cast<int32_t>(scrollbarX), height - SCROLLBAR_WIDTH, static_cast<int32_t>(scrollbarWidth), SCROLLBAR_WIDTH, m_scrollbarColor);
+			m_drawer->drawRectangle(static_cast<int32_t>(scrollbarX), height - SCROLLBAR_WIDTH, static_cast<int32_t>(scrollbarWidth), SCROLLBAR_WIDTH, m_scrollbarColor);
 			m_hasHorizontalScrollbar = true;
 		}
 		m_drawer->setState(state);

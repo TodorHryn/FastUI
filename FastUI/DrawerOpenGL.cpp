@@ -13,6 +13,7 @@
 namespace fastui
 {
 	Drawer* drawer = nullptr;
+	size_t ROUNDED_CORNER_POINTS = 4;
 
 	void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 		if (drawer)
@@ -142,13 +143,30 @@ namespace fastui
 			-1.0f, 1.0f, 0.0f,
 			1.0f, 1.0f, 0.0f,
 		};
-
 		glGenVertexArrays(1, &m_rectVAO);
-
 		glGenBuffers(1, &m_rectVBO);
 		glBindVertexArray(m_rectVAO);
 		glBindBuffer(GL_ARRAY_BUFFER, m_rectVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(rect), rect, GL_STATIC_DRAW);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+
+		std::vector<float> roundedCorner;
+		roundedCorner.push_back(-1.0f);
+		roundedCorner.push_back(-1.0f);
+		roundedCorner.push_back(0.0f);
+		for (size_t i = 0; i < ROUNDED_CORNER_POINTS; ++i)
+		{
+			float angle = i * 3.1415 / 2 / (ROUNDED_CORNER_POINTS - 1);
+			roundedCorner.push_back(sin(angle) * 2 - 1);
+			roundedCorner.push_back(cos(angle) * 2 - 1);
+			roundedCorner.push_back(0.0f);
+		}
+		glGenVertexArrays(1, &m_cornerVAO);
+		glGenBuffers(1, &m_cornerVBO);
+		glBindVertexArray(m_cornerVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, m_cornerVBO);
+		glBufferData(GL_ARRAY_BUFFER, roundedCorner.size() * sizeof(float), roundedCorner.data(), GL_STATIC_DRAW);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
 
@@ -157,13 +175,12 @@ namespace fastui
 		m_imageShader.load(ID_SHADER_IMAGE);
 
 		std::vector<uint8_t> font;
-		LoadResource(ID_FONT, font);
-		m_fonts.emplace_back();
-		m_fonts[0].load(font);
-
-		LoadResource(ID_FONT_2, font);
-		m_fonts.emplace_back();
-		m_fonts[1].load(font);
+		for (size_t i = 0; i < 3; ++i)
+		{
+			LoadResource(ID_FONT_1 + i, font);
+			m_fonts.emplace_back();
+			m_fonts[i].load(font);
+		}
 	}
 
 	DrawerOpenGL::~DrawerOpenGL()
@@ -225,7 +242,20 @@ namespace fastui
 		glfwSwapBuffers(m_window);
 	}
 
-	void DrawerOpenGL::drawRectange(int32_t x, int32_t y, int32_t width, int32_t height, Color color)
+	void DrawerOpenGL::drawRoundedRectangle(int32_t x, int32_t y, int32_t width, int32_t height, Color color)
+	{
+		int32_t radius = 4;
+
+		drawRoundedCorner(x, y, radius, radius, color, 3.1415 / 2);
+		drawRoundedCorner(width - radius, y, radius, radius, color, 0);
+		drawRoundedCorner(x, height - radius, radius, radius, color, 3.1415);
+		drawRoundedCorner(width - radius, height - radius, radius, radius, color, 3.1415 * 3 / 2);
+		drawRectangle(x + radius, y, width - radius * 2, radius, color);
+		drawRectangle(x, y + radius, width, height - radius * 2, color);
+		drawRectangle(x + radius, height - radius, width - radius * 2, radius, color);
+	}
+
+	void DrawerOpenGL::drawRectangle(int32_t x, int32_t y, int32_t width, int32_t height, Color color)
 	{
 		m_rectShader.use();
 
@@ -251,10 +281,10 @@ namespace fastui
 
 	void DrawerOpenGL::drawShadowBorder(int32_t x, int32_t y, int32_t width, int32_t height, int32_t thickness, Color color)
 	{
-		drawRectange(width - thickness, 0, thickness, height, color);		//Right
-		drawRectange(0, 0, thickness, height, color);						//Left
-		drawRectange(0, 0, width, thickness, color);						//Top
-		drawRectange(0, height, width, thickness, color);					//Bottom
+		drawRectangle(width - thickness, 0, thickness, height, color);		//Right
+		drawRectangle(0, 0, thickness, height, color);						//Left
+		drawRectangle(0, 0, width, thickness, color);						//Top
+		drawRectangle(0, height, width, thickness, color);					//Bottom
 	}
 
 	void DrawerOpenGL::drawText(int32_t x, int32_t y, int32_t size, Color color, const UnicodeString& text, int32_t cursorPos)
@@ -264,7 +294,7 @@ namespace fastui
 		for (size_t i = 0; i < text.size(); i++)
 		{
 			if (cursorPos == i)
-				drawRectange(x + static_cast<int32_t>(advanceX), y, 2, size, Drawer::Color(0x00, 0x00, 0x00));
+				drawRectangle(x + static_cast<int32_t>(advanceX), y, 2, size, Drawer::Color(0x00, 0x00, 0x00));
 
 			m_charShader.use();
 			CharacterOpenGL& c = getChar(text[i]);
@@ -273,7 +303,7 @@ namespace fastui
 			advanceX += static_cast<float>(c.m_advance) / 64 * charScale;
 		}
 		if (cursorPos >= 0 && cursorPos >= text.size())
-			drawRectange(x + static_cast<int32_t>(advanceX), y, 2, size, Drawer::Color(0x00, 0x00, 0x00));
+			drawRectangle(x + static_cast<int32_t>(advanceX), y, 2, size, Drawer::Color(0x00, 0x00, 0x00));
 		disableScissor();
 	}
 
@@ -285,7 +315,7 @@ namespace fastui
 		for (size_t i = 0; i < text.size(); i++)
 		{
 			if (cursorPos == i)
-				drawRectange(x + static_cast<int32_t>(advanceX), y + static_cast<int32_t>(advanceY), 2, size, Drawer::Color(0x00, 0x00, 0x00));
+				drawRectangle(x + static_cast<int32_t>(advanceX), y + static_cast<int32_t>(advanceY), 2, size, Drawer::Color(0x00, 0x00, 0x00));
 
 			m_charShader.use();
 			if (wordWidth == 0 && text[i] != ' ' && text[i] != '\n')
@@ -334,7 +364,7 @@ namespace fastui
 			}
 		}
 		if (cursorPos >= 0 && cursorPos >= text.size())
-			drawRectange(x + static_cast<int32_t>(advanceX), y + static_cast<int32_t>(advanceY), 2, size, Drawer::Color(0x00, 0x00, 0x00));
+			drawRectangle(x + static_cast<int32_t>(advanceX), y + static_cast<int32_t>(advanceY), 2, size, Drawer::Color(0x00, 0x00, 0x00));
 		disableScissor();
 	}
 
@@ -434,7 +464,7 @@ namespace fastui
 		for (size_t i = 0; i < m_fonts.size(); ++i)
 			if (m_fonts[i].contains(ch))
 				return m_fonts[i].get(ch);
-		return m_fonts[0].get(0);
+		return m_fonts[0].get(0xFFFD);
 	}
 
 	void DrawerOpenGL::enableScissor()
@@ -449,6 +479,31 @@ namespace fastui
 	void DrawerOpenGL::disableScissor()
 	{
 		glDisable(GL_SCISSOR_TEST);
+	}
+
+	void DrawerOpenGL::drawRoundedCorner(int32_t x, int32_t y, int32_t width, int32_t height, Color color, float angle)
+	{
+		m_rectShader.use();
+
+		glm::mat4 projection(1.0f);
+		projection = glm::translate(projection, glm::vec3(
+			glx(x + m_state.m_translate_x, width),
+			gly(y + m_state.m_translate_y, height),
+			0.0f
+		));
+		projection = glm::scale(projection, glm::vec3(glwidth(width), glheight(height), 1.0f));
+		projection = glm::rotate(projection, angle, glm::vec3(0.0f, 0.0f, 1.0f));
+		glm::vec4 clr;
+		clr.a = color.A / 255.0f;
+		clr.r = color.R / 255.0f;
+		clr.b = color.B / 255.0f;
+		clr.g = color.G / 255.0f;
+
+		m_rectShader.setMatrix4fv("projection", projection);
+		m_rectShader.set4fv("color", clr);
+
+		glBindVertexArray(m_cornerVAO);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, ROUNDED_CORNER_POINTS + 1);
 	}
 
 	void DrawerOpenGL::drawChar(const CharacterOpenGL& c, int32_t x, int32_t y, int32_t size, Color color)

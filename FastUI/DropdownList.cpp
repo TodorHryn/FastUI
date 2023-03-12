@@ -13,6 +13,7 @@ namespace fastui
 		, m_hoveredItem(UINT32_MAX)
 		, m_hoverOverlay(false)
 	{
+		m_hoverColor = Drawer::Color(0xF0, 0xF0, 0xF0);
 	}
 
 	DropdownList::~DropdownList()
@@ -79,8 +80,7 @@ namespace fastui
 			for (int32_t i = 0; i < m_listBB.size(); ++i)
 			{
 				if (x >= m_listBB[i].x && x <= m_listBB[i].x + m_listBB[i].width
-					&& y >= m_listBB[i].y && y <= m_listBB[i].y + m_listBB[i].height
-					&& i != m_selectedItem)
+					&& y >= m_listBB[i].y && y <= m_listBB[i].y + m_listBB[i].height)
 				{
 					m_hoveredItem = i;
 					return shared_from_this();
@@ -94,12 +94,12 @@ namespace fastui
 	void DropdownList::draw(int32_t width, int32_t height)
 	{
 		Drawer::State state = m_drawer->state();
-		m_drawer->drawRectange(0, 0, width, height, m_mouseOver ? m_hoverColor : m_backgroundColor);
-		m_drawer->drawShadowBorder(0, 0, width, height, 1, Drawer::Color(0xA0, 0xA0, 0xA0));
+		m_drawer->drawRoundedRectangle(0, 0, width, height, m_mouseOver ? m_hoverColor : m_backgroundColor);
 
 		if (getSelectedItem().size())
 		{
-			m_drawer->drawText(m_paddingX, height / 2 - m_textSize / 2, m_textSize, m_textColor, getSelectedItem());
+			m_drawer->drawText(m_paddingX, 0, m_textSize, m_textColor, getSelectedItem());
+			m_drawer->drawText(width - m_textSize, 0, m_textSize, m_textColor, "🞃");
 		}
 
 		m_drawer->setState(state);
@@ -113,21 +113,30 @@ namespace fastui
 		if (m_showItems)
 		{
 			Drawer::State state = m_drawer->state();
-			m_drawer->translate(0, height);
+
+			//Draw border
+			int32_t totalHeight = 0;
 			for (int i = 0; i < m_list.size(); ++i)
 			{
-				if (m_selectedItem == i)
-					continue;
-				auto size = m_drawer->measureText(m_textSize, m_list[i]);
+				auto size = m_drawer->measureText(m_textSize, m_list[i]); //TODO: optimize
+				totalHeight += size.second + m_paddingY * 2;
+			}
+			m_drawer->drawRoundedRectangle(0, 0, width, totalHeight, Drawer::Color(0xA0, 0xA0, 0xA0));
+			m_drawer->drawRoundedRectangle(1, 1, width - 2, totalHeight - 1, m_backgroundColor);
+
+			//Draw items
+			for (int i = 0; i < m_list.size(); ++i)
+			{
+				int itemId = screenposToId(i);
+				auto size = m_drawer->measureText(m_textSize, m_list[itemId]);
 				int32_t translateY = m_drawer->state().m_translate_y - state.m_translate_y;
-				m_listBB[i] = fastui::Rectangle(0, translateY, width, size.second + m_paddingY * 2);
-				m_drawer->drawRectange(0, 0, width, size.second + m_paddingY * 2, m_hoverOverlay && m_hoveredItem == i ? m_hoverColor : m_backgroundColor);
-				m_drawer->drawText(m_paddingX, size.second / 2 - m_textSize / 2, m_textSize, m_textColor, m_list[i]);
+				m_listBB[itemId] = fastui::Rectangle(0, translateY, width, size.second + m_paddingY * 2);
+				if (m_hoverOverlay && itemId == m_hoveredItem)
+					m_drawer->drawRoundedRectangle(1, 1, width - 2, size.second + m_paddingY * 2 - 1, m_hoverColor);
+				m_drawer->drawText(m_paddingX, 0, m_textSize, m_textColor, m_list[itemId]);
 				m_drawer->translate(0, size.second + m_paddingY * 2);
 			}
-			int32_t height = m_drawer->state().m_translate_y - state.m_translate_y;
 			m_drawer->setState(state);
-			m_drawer->drawShadowBorder(0, 0, width, height, 1, Drawer::Color(0xA0, 0xA0, 0xA0));
 		}
 	}
 
@@ -137,7 +146,7 @@ namespace fastui
 		{
 			m_minWidth = 0;
 			for (int32_t i = 0; i < m_list.size(); ++i)
-				m_minWidth = std::max(m_minWidth, static_cast<int32_t>(m_drawer->measureText(m_textSize, m_list[i]).first + m_paddingX * 2));
+				m_minWidth = std::max(m_minWidth, static_cast<int32_t>(m_drawer->measureText(m_textSize, m_list[i]).first + m_textSize + m_paddingX * 2));
 		}
 
 		return m_minWidth;
@@ -146,5 +155,15 @@ namespace fastui
 	int32_t DropdownList::getMinHeight(int32_t expectedWidth) const
 	{
 		return m_textSize + m_paddingY * 2;
+	}
+
+	size_t DropdownList::screenposToId(size_t id)
+	{
+		size_t ret = id;
+		if (id == 0)
+			ret = m_selectedItem;
+		else if (id <= m_selectedItem)
+			ret--;
+		return ret;
 	}
 };

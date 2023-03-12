@@ -28,9 +28,9 @@ namespace fastui
 	void Checkbox::draw(int32_t width, int32_t height)
 	{
 		Drawer::State state = m_drawer->state();
-		m_drawer->drawRectange(0, 0, width, height, m_backgroundColor);
-		m_drawer->drawRectange(m_paddingX, (height - m_checkboxSize) / 2, m_checkboxSize, m_checkboxSize, m_mouseOver ? m_hoverColor : m_checkedColor);
-		m_drawer->drawRectange(
+		m_drawer->drawRectangle(0, 0, width, height, m_backgroundColor);
+		m_drawer->drawRectangle(m_paddingX, (height - m_checkboxSize) / 2, m_checkboxSize, m_checkboxSize, m_mouseOver ? m_hoverColor : m_checkedColor);
+		m_drawer->drawRectangle(
 			m_paddingX + m_checkboxBorderSize,
 			(height - m_checkboxSize) / 2 + m_checkboxBorderSize,
 			m_checkboxSize - m_checkboxBorderSize * 2,

@@ -8,7 +8,7 @@ namespace fastui
 		, m_paddingX(0)
 		, m_paddingY(0)
 		, m_backgroundColor(0xFF, 0xFF, 0xFF, 0x00)
-		, m_hoverColor(0xF4, 0xF4, 0xF4)
+		, m_hoverColor(0xF8, 0xF8, 0xF8)
 		, m_mouseOver(false)
 	{
 	}
