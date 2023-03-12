@@ -87,7 +87,7 @@ std::shared_ptr<LinearLayout> createChat()
 
 	std::shared_ptr<Button> inputSendAsMe = std::make_shared<Button>();
 	inputSendAsMe->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
-	inputSendAsMe->m_textSize = 48;
+	inputSendAsMe->m_textSize = 24;
 	inputSendAsMe->m_paddingX = 8;
 	inputSendAsMe->m_paddingY = 8;
 	inputSendAsMe->m_text = "Send as me";
@@ -100,7 +100,7 @@ std::shared_ptr<LinearLayout> createChat()
 
 	std::shared_ptr<Button> inputSendAsOther = std::make_shared<Button>();
 	inputSendAsOther->m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
-	inputSendAsOther->m_textSize = 48;
+	inputSendAsOther->m_textSize = 24;
 	inputSendAsOther->m_paddingX = 8;
 	inputSendAsOther->m_paddingY = 8;
 	inputSendAsOther->m_text = "Send as other";

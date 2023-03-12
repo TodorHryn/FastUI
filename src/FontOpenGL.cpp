@@ -35,7 +35,7 @@ namespace fastui
 	{
 		if (FT_New_Face(*m_library, path.c_str(), 0, m_face.get()))
 			throw std::exception("Failed to load font");
-		FT_Set_Pixel_Sizes(*m_face, 0, 48);
+		FT_Set_Pixel_Sizes(*m_face, 0, 24); //48
 	}
 
 	void FontOpenGL::load(const std::vector<uint8_t>& data)
@@ -43,7 +43,7 @@ namespace fastui
 		m_faceData = data;
 		if (FT_New_Memory_Face(*m_library, m_faceData.data(), static_cast<FT_Long>(m_faceData.size()), 0, m_face.get()))
 			throw std::exception("Failed to load font");
-		FT_Set_Pixel_Sizes(*m_face, 0, 48);
+		FT_Set_Pixel_Sizes(*m_face, 0, 24); //48
 	}
 
 	CharacterOpenGL& FontOpenGL::get(UnicodeString::char_type ch)

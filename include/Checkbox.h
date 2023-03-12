@@ -8,7 +8,7 @@ namespace fastui
 	class Checkbox : public View
 	{
 	public:
-		Checkbox(SizePolitics width = SizePolitics::WRAP_CONTENT, SizePolitics height = SizePolitics::MATCH_PARENT);
+		Checkbox(SizePolitics width = SizePolitics::WRAP_CONTENT, SizePolitics height = SizePolitics::WRAP_CONTENT);
 		virtual ~Checkbox();
 
 		virtual bool onMouseEvent(const MouseEvent& ev) override;

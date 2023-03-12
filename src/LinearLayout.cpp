@@ -20,7 +20,7 @@ namespace fastui
 		, m_hasVerticalScrollbar(false)
 		, m_hasHorizontalScrollbar(false)
 	{
-		
+		m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
 	}
 
 	LinearLayout::~LinearLayout()

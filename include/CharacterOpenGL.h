@@ -15,7 +15,7 @@ namespace fastui
 		CharacterOpenGL& operator=(CharacterOpenGL&&);
 		~CharacterOpenGL();
 
-		int32_t m_size = 48;
+		int32_t m_size = 24; //48
 		GLuint m_texture;
 		int32_t m_width, m_height;
 		int32_t m_bearingX, m_bearingY;

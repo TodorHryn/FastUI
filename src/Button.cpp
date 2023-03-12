@@ -4,11 +4,14 @@ namespace fastui
 {
 	Button::Button(SizePolitics width, SizePolitics height)
 		: View(width, height)
-		, m_textSize(12)
+		, m_textSize(24)
 		, m_textColor(0x00, 0x00, 0x00)
 		, m_pressedColor(0xF0, 0xF0, 0xF0)
 		, m_pressed(false)
 	{
+		m_backgroundColor = Drawer::Color(0xFF, 0xFF, 0xFF);
+		m_paddingX = 8;
+		m_paddingY = 8;
 	}
 
 	Button::~Button()

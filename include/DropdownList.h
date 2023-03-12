@@ -9,7 +9,7 @@ namespace fastui
 	class DropdownList : public View
 	{
 	public:
-		DropdownList(SizePolitics width = SizePolitics::WRAP_CONTENT, SizePolitics height = SizePolitics::MATCH_PARENT);
+		DropdownList(SizePolitics width = SizePolitics::WRAP_CONTENT, SizePolitics height = SizePolitics::WRAP_CONTENT);
 		virtual ~DropdownList();
 
 		virtual void setList(const std::vector<UnicodeString>& list);

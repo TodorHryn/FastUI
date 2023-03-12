@@ -19,7 +19,7 @@ Font::Font(const std::wstring &wpath)
 	if (FT_New_Face(*m_library, path.c_str(), 0, &m_face))
 		throw std::exception("Failed to load font");
 
-	FT_Set_Pixel_Sizes(m_face, 0, 48);
+	FT_Set_Pixel_Sizes(m_face, 0, 24); //48
 }
 
 Font::~Font()

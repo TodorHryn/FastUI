@@ -399,3 +399,4 @@ FodyWeavers.xsd
 
 build-shared
 build-static
+out
