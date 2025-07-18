@@ -1,4 +1,5 @@
 #include "Character.h"
+#include <stdexcept>
 
 Character::Character()
 {
@@ -9,7 +10,7 @@ Character::Character(FT_Face &face, wchar_t c)
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	if (FT_Load_Char(face, c, FT_LOAD_RENDER))
-		throw std::exception("Failed to load char");
+		throw std::runtime_error("Failed to load char");
 
 	m_width = face->glyph->bitmap.width;
 	m_height = face->glyph->bitmap.rows;

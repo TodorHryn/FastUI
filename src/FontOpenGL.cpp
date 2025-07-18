@@ -1,8 +1,9 @@
 #include "FontOpenGL.h"
-#include <freetype\freetype.h>
-#include <freetype\ftglyph.h>
-#include <freetype\ftoutln.h>
-#include <freetype\fttrigon.h>
+#include <freetype/freetype.h>
+#include <freetype/ftglyph.h>
+#include <freetype/ftoutln.h>
+#include <freetype/fttrigon.h>
+#include <stdexcept>
 
 namespace fastui
 {
@@ -15,7 +16,7 @@ namespace fastui
 		{
 			m_library = new FT_Library;
 			if (FT_Init_FreeType(m_library))
-				throw std::exception("Failed to initialize freetype");
+				throw std::runtime_error("Failed to initialize freetype");
 		}
 	}
 
@@ -34,7 +35,7 @@ namespace fastui
 	void FontOpenGL::load(const std::string& path)
 	{
 		if (FT_New_Face(*m_library, path.c_str(), 0, m_face.get()))
-			throw std::exception("Failed to load font");
+			throw std::runtime_error("Failed to load font");
 		FT_Set_Pixel_Sizes(*m_face, 0, 24); //48
 	}
 
@@ -42,7 +43,7 @@ namespace fastui
 	{
 		m_faceData = data;
 		if (FT_New_Memory_Face(*m_library, m_faceData.data(), static_cast<FT_Long>(m_faceData.size()), 0, m_face.get()))
-			throw std::exception("Failed to load font");
+			throw std::runtime_error("Failed to load font");
 		FT_Set_Pixel_Sizes(*m_face, 0, 24); //48
 	}
 

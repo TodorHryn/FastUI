@@ -1,11 +1,11 @@
 #include "ShaderProgram.h"
 #include <fstream>
 #include <iostream>
-#include <glad\glad.h>
-#include <glm\glm.hpp>
-#include <glm\gtc\matrix_transform.hpp>
-#include <glm\gtc\type_ptr.hpp>
-#include <glm\gtx\string_cast.hpp>
+#include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/string_cast.hpp>
 #include "Util.h"
 
 #define CHECK_SHADER(shader)																		\

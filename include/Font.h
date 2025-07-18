@@ -1,6 +1,6 @@
 #pragma once
 #include <ft2build.h>
-#include <freetype\freetype.h>
+#include <freetype/freetype.h>
 #include <string>
 #include <unordered_map>
 #include "Character.h"

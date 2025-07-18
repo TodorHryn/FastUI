@@ -20,7 +20,7 @@ https://stackoverflow.com/questions/13397571/precise-thread-sleep-needed-max-1ms
 
 /**********************************=> unix ************************************/
 #ifndef _WIN32
-void SleepInMs(uint32 ms) {
+void SleepInMs(uint32_t ms) {
 	struct timespec ts;
 	ts.tv_sec = ms / 1000;
 	ts.tv_nsec = ms % 1000 * 1000000;
@@ -28,7 +28,7 @@ void SleepInMs(uint32 ms) {
 	while (nanosleep(&ts, &ts) == -1 && errno == EINTR);
 }
 
-void SleepInUs(uint32 us) {
+void SleepInUs(uint32_t us) {
 	struct timespec ts;
 	ts.tv_sec = us / 1000000;
 	ts.tv_nsec = us % 1000000 * 1000;
@@ -37,10 +37,10 @@ void SleepInUs(uint32 us) {
 }
 
 #ifndef __APPLE__
-uint64 NowInUs() {
+uint64_t NowInUs() {
 	struct timespec now;
 	clock_gettime(CLOCK_MONOTONIC, &now);
-	return static_cast<uint64>(now.tv_sec) * 1000000 + now.tv_nsec / 1000;
+	return static_cast<uint64_t>(now.tv_sec) * 1000000 + now.tv_nsec / 1000;
 }
 
 #else // mac

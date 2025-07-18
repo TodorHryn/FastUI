@@ -1,8 +1,8 @@
 #pragma once
 #include <ft2build.h>
-#include <freetype\freetype.h>
+#include <freetype/freetype.h>
 #include <string>
-#include <glad\glad.h>
+#include <glad/glad.h>
 
 namespace fastui
 {

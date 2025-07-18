@@ -1,9 +1,10 @@
 #pragma once
 #include <ft2build.h>
-#include <freetype\freetype.h>
+#include <freetype/freetype.h>
 #include <string>
 #include <unordered_map>
 #include <memory>
+#include <vector>
 #include "CharacterOpenGL.h"
 #include "UnicodeString.h"
 

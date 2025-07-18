@@ -1,8 +1,9 @@
 #include "Font.h"
-#include <freetype\freetype.h>
-#include <freetype\ftglyph.h>
-#include <freetype\ftoutln.h>
-#include <freetype\fttrigon.h>
+#include <freetype/freetype.h>
+#include <freetype/ftglyph.h>
+#include <freetype/ftoutln.h>
+#include <freetype/fttrigon.h>
+#include <stdexcept>
 
 FT_Library *Font::m_library = nullptr;
 
@@ -12,12 +13,12 @@ Font::Font(const std::wstring &wpath)
 	{
 		m_library = new FT_Library;
 		if (FT_Init_FreeType(m_library))
-			throw std::exception("Failed to initialize freetype");
+			throw std::runtime_error("Failed to initialize freetype");
 	}
 
 	std::string path(wpath.begin(), wpath.end());
 	if (FT_New_Face(*m_library, path.c_str(), 0, &m_face))
-		throw std::exception("Failed to load font");
+		throw std::runtime_error("Failed to load font");
 
 	FT_Set_Pixel_Sizes(m_face, 0, 24); //48
 }

@@ -2,12 +2,13 @@
 #include "ImageOpenGL.h"
 #include "View.h"
 #include "Util.h"
-#include <glad\glad.h>
-#include <GLFW\glfw3.h>
-#include <glm\glm.hpp>
-#include <glm\gtc\matrix_transform.hpp>
-#include <glm\gtc\type_ptr.hpp>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <algorithm>
+#include <stdexcept>
 
 namespace fastui
 {
@@ -115,13 +116,13 @@ namespace fastui
 		m_window = glfwCreateWindow(width, height, "FastUI Project", NULL, NULL);
 		if (m_window == nullptr) {
 			glfwTerminate();
-			throw std::exception("Failed to create window");
+			throw std::runtime_error("Failed to create window");
 		}
 
 		glfwMakeContextCurrent(m_window);
 
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-			throw  std::exception("Failed to initialize GLAD");
+			throw  std::runtime_error("Failed to initialize GLAD");
 
 		glViewport(0, 0, width, height);
 		glfwSetFramebufferSizeCallback(m_window, framebuffer_size_callback);

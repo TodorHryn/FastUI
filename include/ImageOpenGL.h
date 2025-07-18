@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-#include <glad\glad.h>
+#include <glad/glad.h>
 #include "Drawer.h"
 
 namespace fastui

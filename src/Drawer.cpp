@@ -1,8 +1,8 @@
 #include "Drawer.h"
 #include "View.h"
 #include <fstream>
-#include <GLFW\glfw3.h>
-#include <glad\glad.h>
+#include <GLFW/glfw3.h>
+#include <glad/glad.h>
 #include <algorithm>
 
 namespace fastui

@@ -42,12 +42,6 @@ namespace fastui
 		return m_str.indexOf(ch);
 	}
 
-	UnicodeString& UnicodeString::operator=(const std::string& str)
-	{
-		m_str = icu::UnicodeString(str.c_str());
-		return *this;
-	}
-
 	UnicodeString& UnicodeString::operator+=(char_type ch)
 	{
 		insert(size(), ch);

@@ -19,7 +19,6 @@ namespace fastui
 		char_type pop_back();
 
 		size_t find(char_type ch) const;
-		UnicodeString& operator=(const std::string& str);
 		UnicodeString& operator+=(char_type ch);
 		bool operator==(const std::string& str) const;
 		const char_type operator[](size_t ind) const;

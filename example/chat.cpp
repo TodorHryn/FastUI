@@ -39,7 +39,7 @@ void pushMessage(std::shared_ptr<LinearLayout> msgLay, std::shared_ptr<TextArea>
 		username->m_textSize = 24;
 		username->m_paddingX = 8;
 		username->m_paddingY = 8;
-		username->m_text = asMe ? "[My username]" : "[Other username]";
+		username->m_text = UnicodeString(asMe ? "[My username]" : "[Other username]");
 		username->m_editable = false;
 		usernameLay->addChild(username);
 	}

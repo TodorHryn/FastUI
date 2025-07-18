@@ -401,3 +401,4 @@ build-shared
 build-static
 out
 build
+.vscode
