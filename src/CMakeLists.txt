@@ -42,6 +42,7 @@ find_package(ICU REQUIRED COMPONENTS uc dt in io)
 find_path(STB_INCLUDE_DIRS "stb_image.h")
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
+target_compile_definitions(${PROJECT_NAME} PUBLIC GLM_ENABLE_EXPERIMENTAL)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${STB_INCLUDE_DIRS})
 
